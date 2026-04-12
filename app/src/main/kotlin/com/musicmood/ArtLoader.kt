@@ -1,7 +1,6 @@
 package com.musicmood
 
 import android.content.ContentUris
-import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
@@ -18,24 +17,26 @@ import com.bumptech.glide.request.target.Target
 /**
  * Caricamento copertine tramite Glide 4.16.
  *
- * FIRMA CRITICA in Glide 4.16 — RequestListener<Drawable>:
+ * Il Context viene ricavato dalla View passata — i caller non lo passano esplicitamente.
+ *
+ * Firme CRITICHE di RequestListener<Drawable> in Glide 4.16:
  *   onLoadFailed    → model: Any?   (@Nullable Object in Java)
  *   onResourceReady → model: Any    (@NonNull Object in Java)  ← NON nullable
  */
 object ArtLoader {
 
-    private val options = RequestOptions()
+    private val OPTIONS = RequestOptions()
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .centerCrop()
 
-    // ── Caricamento standard (adapter lista) ──────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // load(ivArt, tvLetter, song)
+    // Usato in: SongAdapter, GroupedAdapter, MoodSectionsFragment, MainActivity
+    // ─────────────────────────────────────────────────────────────────────────
 
-    fun load(
-        context: Context,
-        song: Song,
-        ivArt: ImageView,
-        tvLetter: TextView
-    ) {
+    fun load(ivArt: ImageView, tvLetter: TextView, song: Song) {
+        val ctx = ivArt.context
+
         val uri: Any? = when {
             song.albumId > 0L -> ContentUris.withAppendedId(
                 Uri.parse("content://media/external/audio/albumart"), song.albumId
@@ -49,9 +50,9 @@ object ArtLoader {
             return
         }
 
-        Glide.with(context)
+        Glide.with(ctx)
             .load(uri)
-            .apply(options)
+            .apply(OPTIONS)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -60,7 +61,7 @@ object ArtLoader {
                     isFirstResource: Boolean
                 ): Boolean {
                     if (song.albumId > 0L && song.coverPath.isNotBlank()) {
-                        Glide.with(context).load(song.coverPath).apply(options).into(ivArt)
+                        Glide.with(ctx).load(song.coverPath).apply(OPTIONS).into(ivArt)
                         ivArt.visibility    = View.VISIBLE
                         tvLetter.visibility = View.GONE
                     } else {
@@ -84,33 +85,41 @@ object ArtLoader {
             .into(ivArt)
     }
 
-    // ── Caricamento player (grande, con callback per placeholder) ─────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // loadPlayer(imageView, placeholderView, tvChar, onNoArt)
+    // Usato in: PlayerFragment (con parametri nominati)
+    // ─────────────────────────────────────────────────────────────────────────
 
     fun loadPlayer(
-        context: Context,
-        song: Song,
-        ivArtwork: ImageView,
-        letterLayout: View,
-        onMissingCover: () -> Unit
+        imageView: ImageView,
+        placeholderView: View,
+        tvChar: TextView,
+        onNoArt: () -> Unit
     ) {
-        val bigOptions = options.clone().override(560, 560)
+        val ctx = imageView.context
+        val bigOptions = OPTIONS.clone().override(560, 560)
+
+        val song: Song? = imageView.tag as? Song  // il caller deve fare ivArtwork.tag = song
+        // Fallback: recupera uri direttamente dal tag se disponibile,
+        // altrimenti usa la logica standard.
 
         val uri: Any? = when {
-            song.albumId > 0L -> ContentUris.withAppendedId(
+            song != null && song.albumId > 0L -> ContentUris.withAppendedId(
                 Uri.parse("content://media/external/audio/albumart"), song.albumId
             )
-            song.coverPath.isNotBlank() -> song.coverPath
+            song != null && song.coverPath.isNotBlank() -> song.coverPath
             else -> null
         }
 
         if (uri == null) {
-            ivArtwork.visibility    = View.INVISIBLE
-            letterLayout.visibility = View.VISIBLE
-            onMissingCover()
+            imageView.visibility      = View.INVISIBLE
+            placeholderView.visibility = View.VISIBLE
+            tvChar.visibility          = View.VISIBLE
+            onNoArt()
             return
         }
 
-        Glide.with(context)
+        Glide.with(ctx)
             .load(uri)
             .apply(bigOptions)
             .listener(object : RequestListener<Drawable> {
@@ -120,8 +129,8 @@ object ArtLoader {
                     target: Target<Drawable>,
                     isFirstResource: Boolean
                 ): Boolean {
-                    if (song.albumId > 0L && song.coverPath.isNotBlank()) {
-                        Glide.with(context)
+                    if (song != null && song.albumId > 0L && song.coverPath.isNotBlank()) {
+                        Glide.with(ctx)
                             .load(song.coverPath)
                             .apply(bigOptions)
                             .listener(object : RequestListener<Drawable> {
@@ -131,9 +140,10 @@ object ArtLoader {
                                     target: Target<Drawable>,
                                     isFirstResource: Boolean
                                 ): Boolean {
-                                    ivArtwork.visibility    = View.INVISIBLE
-                                    letterLayout.visibility = View.VISIBLE
-                                    onMissingCover()
+                                    imageView.visibility       = View.INVISIBLE
+                                    placeholderView.visibility = View.VISIBLE
+                                    tvChar.visibility           = View.VISIBLE
+                                    onNoArt()
                                     return true
                                 }
 
@@ -144,16 +154,18 @@ object ArtLoader {
                                     dataSource: DataSource,
                                     isFirstResource: Boolean
                                 ): Boolean {
-                                    ivArtwork.visibility    = View.VISIBLE
-                                    letterLayout.visibility = View.GONE
+                                    imageView.visibility       = View.VISIBLE
+                                    placeholderView.visibility = View.GONE
+                                    tvChar.visibility           = View.GONE
                                     return false
                                 }
                             })
-                            .into(ivArtwork)
+                            .into(imageView)
                     } else {
-                        ivArtwork.visibility    = View.INVISIBLE
-                        letterLayout.visibility = View.VISIBLE
-                        onMissingCover()
+                        imageView.visibility       = View.INVISIBLE
+                        placeholderView.visibility = View.VISIBLE
+                        tvChar.visibility           = View.VISIBLE
+                        onNoArt()
                     }
                     return true
                 }
@@ -165,15 +177,16 @@ object ArtLoader {
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    ivArtwork.visibility    = View.VISIBLE
-                    letterLayout.visibility = View.GONE
+                    imageView.visibility       = View.VISIBLE
+                    placeholderView.visibility = View.GONE
+                    tvChar.visibility           = View.GONE
                     return false
                 }
             })
-            .into(ivArtwork)
+            .into(imageView)
     }
 
-    // ── Utilità ───────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
 
     private fun showPlaceholder(ivArt: ImageView, tvLetter: TextView, song: Song) {
         ivArt.visibility    = View.INVISIBLE
@@ -181,7 +194,7 @@ object ArtLoader {
         tvLetter.text = song.title.firstOrNull()?.uppercaseChar()?.toString() ?: "♪"
     }
 
-    fun cancel(context: Context, ivArt: ImageView) {
-        try { Glide.with(context).clear(ivArt) } catch (_: Exception) {}
+    fun cancel(ivArt: ImageView) {
+        try { Glide.with(ivArt.context).clear(ivArt) } catch (_: Exception) {}
     }
 }
