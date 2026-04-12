@@ -1,8 +1,5 @@
 package com.musicmood
 
-import android.content.ContentUris
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -29,11 +26,11 @@ class MainActivity : AppCompatActivity() {
         ViewModelProvider(this)[SongViewModel::class.java]
     }
 
-    private val libraryFragment  = LibraryFragment()
-    private val playerFragment   = PlayerFragment()
-    private val statsFragment    = StatsFragment()
+    private val libraryFragment   = LibraryFragment()
+    private val playerFragment    = PlayerFragment()
+    private val statsFragment     = StatsFragment()
     private val bubbleMapFragment = BubbleMapFragment()
-    private var active: Fragment = libraryFragment
+    private var active: Fragment  = libraryFragment
 
     // Mini player views
     private lateinit var miniPlayerContainer: View
@@ -59,7 +56,6 @@ class MainActivity : AppCompatActivity() {
         if (!Python.isStarted()) Python.start(AndroidPlatform(this))
         setContentView(R.layout.activity_main)
 
-        // Richiedi permesso scrittura su Android <= 9
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -69,13 +65,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainer, statsFragment,    "stats").hide(statsFragment)
+            .add(R.id.fragmentContainer, statsFragment,     "stats").hide(statsFragment)
             .add(R.id.fragmentContainer, bubbleMapFragment, "bubbles").hide(bubbleMapFragment)
-            .add(R.id.fragmentContainer, playerFragment,   "player").hide(playerFragment)
-            .add(R.id.fragmentContainer, libraryFragment,  "library")
+            .add(R.id.fragmentContainer, playerFragment,    "player").hide(playerFragment)
+            .add(R.id.fragmentContainer, libraryFragment,   "library")
             .commit()
 
-        // Bottom nav
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
         bottomNav.setOnItemSelectedListener { item ->
             val frag = when (item.itemId) {
@@ -99,15 +94,9 @@ class MainActivity : AppCompatActivity() {
         miniProgress        = findViewById(R.id.miniProgress)
 
         miniPlayer.setOnClickListener { goToPlayer() }
+        miniBtnPlay.setOnClickListener { playerFragment.togglePlayFromMini() }
+        miniBtnNext.setOnClickListener { playerFragment.nextFromMini() }
 
-        miniBtnPlay.setOnClickListener {
-            playerFragment.togglePlayFromMini()
-        }
-        miniBtnNext.setOnClickListener {
-            playerFragment.nextFromMini()
-        }
-
-        // Observe current song for mini player
         var miniPlayerShown = false
         vm.currentSong.observe(this) { song ->
             if (song != null) {
@@ -122,31 +111,9 @@ class MainActivity : AppCompatActivity() {
                 miniTitle.text  = song.title.ifBlank { "Sconosciuto" }
                 miniArtist.text = song.artist.ifBlank { "Artista sconosciuto" }
 
-                // Album art — prova prima MediaStore, poi coverPath scaricata da internet
-                val bmpLocal = if (song.albumId > 0L) {
-                    try {
-                        val uri = ContentUris.withAppendedId(
-                            Uri.parse("content://media/external/audio/albumart"), song.albumId)
-                        contentResolver.openInputStream(uri)?.use {
-                            BitmapFactory.decodeStream(it)
-                        }
-                    } catch (_: Exception) { null }
-                } else null
-                val bmpCached = if (bmpLocal == null && song.coverPath.isNotBlank()) {
-                    try { android.graphics.BitmapFactory.decodeFile(song.coverPath) }
-                    catch (_: Exception) { null }
-                } else null
-                val bmp = bmpLocal ?: bmpCached
+                // ── Copertina mini player: asincrona via ArtLoader ──
+                ArtLoader.load(miniArt, miniArtLetter, song)
 
-                if (bmp != null) {
-                    miniArt.setImageBitmap(bmp)
-                    miniArt.visibility       = View.VISIBLE
-                    miniArtLetter.visibility = View.GONE
-                } else {
-                    miniArt.visibility       = View.INVISIBLE
-                    miniArtLetter.visibility = View.VISIBLE
-                    miniArtLetter.text = song.title.firstOrNull()?.uppercaseChar()?.toString() ?: "♪"
-                }
             } else {
                 miniPlayerContainer.visibility = View.GONE
             }
@@ -157,10 +124,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         vm.loadCache(applicationContext)
-        // Applica le correzioni mood manuali dopo il caricamento della cache
         vm.applyMoodOverrides(applicationContext)
 
-        // Start progress updater
         progressHandler.post(progressRunnable)
     }
 
@@ -204,15 +169,7 @@ class MainActivity : AppCompatActivity() {
         showFragment(libraryFragment)
     }
 
-    fun switchToBubbleMap() {
-        showFragment(bubbleMapFragment)
-    }
-
-    fun switchToSectionsView() {
-        showFragment(bubbleMapFragment)
-    }
-
-    fun switchToListView() {
-        showFragment(libraryFragment)
-    }
+    fun switchToBubbleMap()   { showFragment(bubbleMapFragment) }
+    fun switchToSectionsView() { showFragment(bubbleMapFragment) }
+    fun switchToListView()     { showFragment(libraryFragment) }
 }
