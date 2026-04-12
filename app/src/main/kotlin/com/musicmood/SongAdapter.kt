@@ -1,11 +1,7 @@
 package com.musicmood
 
-import android.content.ContentUris
-import android.graphics.BitmapFactory
 import android.graphics.drawable.GradientDrawable
-import android.net.Uri
 import android.view.*
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DiffUtil
@@ -24,7 +20,7 @@ class SongAdapter(
             override fun areContentsTheSame(a: Song, b: Song) =
                 a.mood == b.mood && a.analyzed == b.analyzed &&
                 a.title == b.title && a.artist == b.artist &&
-                a.coverPath == b.coverPath
+                a.coverPath == b.coverPath && a.moodOverride == b.moodOverride
         }
         val MOOD_COLORS = mapOf(
             "Energico"       to (0xFFF59E0BL).toInt(),
@@ -55,30 +51,8 @@ class SongAdapter(
         val moodDot: View               = v.findViewById(R.id.moodDot)
 
         fun bind(song: Song) {
-            // ── Album art: prova MediaStore → coverPath scaricata → placeholder ──
-            val bmp = if (song.albumId > 0L) {
-                try {
-                    val uri = ContentUris.withAppendedId(
-                        Uri.parse("content://media/external/audio/albumart"), song.albumId)
-                    itemView.context.contentResolver.openInputStream(uri)?.use {
-                        BitmapFactory.decodeStream(it)
-                    }
-                } catch (_: Exception) { null }
-            } else null
-
-            val bmpFinal = bmp ?: if (song.coverPath.isNotBlank()) {
-                try { BitmapFactory.decodeFile(song.coverPath) } catch (_: Exception) { null }
-            } else null
-
-            if (bmpFinal != null) {
-                ivArt.setImageBitmap(bmpFinal)
-                ivArt.visibility    = View.VISIBLE
-                tvLetter.visibility = View.GONE
-            } else {
-                ivArt.visibility    = View.INVISIBLE
-                tvLetter.visibility = View.VISIBLE
-                tvLetter.text = song.title.firstOrNull()?.uppercaseChar()?.toString() ?: "♪"
-            }
+            // ── Album art: asincrono via ArtLoader (MediaStore → coverPath → lettera) ──
+            ArtLoader.load(ivArt, tvLetter, song)
 
             tvTitle.text = song.title.ifBlank { "Sconosciuto" }
             tvArtist.text = buildString {
@@ -88,8 +62,8 @@ class SongAdapter(
             val dur = song.duration.toInt()
             tvDuration.text = "%d:%02d".format(dur / 60, dur % 60)
 
-            if (song.analyzed && song.mood.isNotBlank()) {
-                val color = MOOD_COLORS[song.mood] ?: (0xFF1DB954L).toInt()
+            if (song.analyzed && song.effectiveMood.isNotBlank()) {
+                val color = MOOD_COLORS[song.effectiveMood] ?: (0xFF1DB954L).toInt()
 
                 (moodDot.background as? GradientDrawable)?.setColor(color)
                     ?: run {
@@ -97,11 +71,11 @@ class SongAdapter(
                             shape = GradientDrawable.OVAL; setColor(color) }
                         moodDot.background = dot
                     }
-                moodDot.visibility = View.VISIBLE
+                moodDot.visibility = android.view.View.VISIBLE
 
-                tvMood.text = song.mood
+                tvMood.text = if (song.hasManualMood) "✏ ${song.effectiveMood}" else song.effectiveMood
                 tvMood.setTextColor(color)
-                tvMood.visibility = View.VISIBLE
+                tvMood.visibility = android.view.View.VISIBLE
 
                 tvMeta.text = buildString {
                     if (song.genreResolved.isNotBlank()) append(song.genreResolved)
@@ -111,8 +85,8 @@ class SongAdapter(
                     }
                 }
             } else {
-                moodDot.visibility = View.GONE
-                tvMood.visibility  = View.GONE
+                moodDot.visibility = android.view.View.GONE
+                tvMood.visibility  = android.view.View.GONE
                 tvMeta.text = if (!song.analyzed) "analisi in corso…" else ""
             }
 
@@ -125,7 +99,7 @@ class SongAdapter(
 
         private fun showMoodCorrectionDialog(song: Song) {
             val ctx = itemView.context
-            val currentIdx = MOODS.indexOf(song.mood).coerceAtLeast(0)
+            val currentIdx = MOODS.indexOf(song.effectiveMood).coerceAtLeast(0)
 
             AlertDialog.Builder(ctx)
                 .setTitle("Correggi il mood")
@@ -140,7 +114,7 @@ class SongAdapter(
                 }
                 .setNegativeButton("Annulla", null)
                 .also { builder ->
-                    if (song.mood.isNotBlank()) {
+                    if (song.effectiveMood.isNotBlank()) {
                         builder.setNeutralButton("Ripristina algoritmo") { _, _ ->
                             SongCache.clearMoodOverride(ctx, song.path)
                         }
