@@ -1,11 +1,8 @@
 package com.musicmood
 
-import android.content.ContentUris
 import android.content.ContentValues
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -44,7 +41,6 @@ class PlayerFragment : Fragment() {
     private lateinit var ivArtwork: ImageView
     private lateinit var artworkLetterLayout: View
     private lateinit var tvArtworkLetterChar: TextView
-    private lateinit var artworkBg: View
 
     private val handler = Handler(Looper.getMainLooper())
     private var isSeeking = false
@@ -91,7 +87,6 @@ class PlayerFragment : Fragment() {
         ivArtwork          = view.findViewById(R.id.ivArtwork)
         artworkLetterLayout = view.findViewById(R.id.tvArtworkLetter)
         tvArtworkLetterChar = view.findViewById(R.id.tvArtworkLetterChar)
-        artworkBg          = view.findViewById(R.id.artworkBg)
 
         btnPlay.setOnClickListener { vm.togglePlay() }
         btnPrev.setOnClickListener { vm.playPrevSong() }
@@ -167,36 +162,21 @@ class PlayerFragment : Fragment() {
             if (song.year.isNotBlank()) append("  ·  ${song.year}")
         }
 
-        // ── Copertina ──────────────────────────────────────────────────────────
-        val bmpLocal = if (song.albumId > 0L) {
-            try {
-                val artUri = ContentUris.withAppendedId(
-                    Uri.parse("content://media/external/audio/albumart"), song.albumId)
-                requireContext().contentResolver.openInputStream(artUri)?.use {
-                    BitmapFactory.decodeStream(it)
-                }
-            } catch (_: Exception) { null }
-        } else null
+        // ── Copertina: caricamento asincrono con ArtLoader ─────────────────────
+        // btnDownloadCover viene mostrato solo se nessuna copertina è disponibile
+        btnDownloadCover.visibility = View.GONE
 
-        val bmpCached = if (bmpLocal == null && song.coverPath.isNotBlank()) {
-            try { BitmapFactory.decodeFile(song.coverPath) } catch (_: Exception) { null }
-        } else null
-
-        val bmp = bmpLocal ?: bmpCached
-
-        if (bmp != null) {
-            ivArtwork.setImageBitmap(bmp)
-            ivArtwork.visibility = View.VISIBLE
-            artworkLetterLayout.visibility = View.GONE
-            btnDownloadCover.visibility = View.GONE
-        } else {
-            ivArtwork.visibility = View.INVISIBLE
-            artworkLetterLayout.visibility = View.VISIBLE
-            tvArtworkLetterChar.text =
-                song.title.firstOrNull()?.uppercaseChar()?.toString() ?: "♪"
-            btnDownloadCover.visibility = View.VISIBLE
-            vm.fetchCoverArtIfMissing(song, requireContext())
-        }
+        ArtLoader.loadPlayer(
+            imageView      = ivArtwork,
+            placeholderView = artworkLetterLayout,
+            tvChar         = tvArtworkLetterChar,
+            song           = song,
+            onNoArt        = {
+                // Nessuna copertina trovata: mostra bottone download e avvia fetch
+                btnDownloadCover.visibility = View.VISIBLE
+                vm.fetchCoverArtIfMissing(song, requireContext())
+            }
+        )
 
         // ── Mood / genere / BPM ──────────────────────────────────────────────
         if (song.analyzed && song.effectiveMood.isNotBlank()) {
@@ -249,15 +229,12 @@ class PlayerFragment : Fragment() {
                 }
 
                 if (bmp == null) {
-                    withContext(Dispatchers.Main) {
-                        showSnack("❌ Copertina non trovata")
-                        resetDownloadBtn()
-                    }
+                    withContext(Dispatchers.Main) { showSnack("❌ Copertina non trovata"); resetDownloadBtn() }
                     return@launch
                 }
 
                 val filename = buildString {
-                    val safe = song.artist.replace(Regex("[^A-Za-z0-9_\\- ]"), "").trim()
+                    val safe  = song.artist.replace(Regex("[^A-Za-z0-9_\\- ]"), "").trim()
                     val safeT = song.title.replace(Regex("[^A-Za-z0-9_\\- ]"), "").trim()
                     if (safe.isNotBlank()) { append(safe); append(" - ") }
                     append(safeT.ifBlank { "copertina" })
@@ -286,10 +263,7 @@ class PlayerFragment : Fragment() {
                         btnDownloadCover.visibility = View.GONE
                     }
                 } else {
-                    withContext(Dispatchers.Main) {
-                        showSnack("❌ Impossibile salvare")
-                        resetDownloadBtn()
-                    }
+                    withContext(Dispatchers.Main) { showSnack("❌ Impossibile salvare"); resetDownloadBtn() }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
