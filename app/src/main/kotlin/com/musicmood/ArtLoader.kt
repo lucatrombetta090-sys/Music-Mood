@@ -16,12 +16,11 @@ import com.bumptech.glide.request.target.Target
 
 /**
  * Caricamento copertine tramite Glide 4.16.
- *
- * Il Context viene ricavato dalla View passata — i caller non lo passano esplicitamente.
+ * Il Context viene ricavato dalla View — i caller non lo passano.
  *
  * Firme CRITICHE di RequestListener<Drawable> in Glide 4.16:
- *   onLoadFailed    → model: Any?   (@Nullable Object in Java)
- *   onResourceReady → model: Any    (@NonNull Object in Java)  ← NON nullable
+ *   onLoadFailed    → model: Any?  (@Nullable)
+ *   onResourceReady → model: Any   (@NonNull) ← NON nullable
  */
 object ArtLoader {
 
@@ -29,10 +28,8 @@ object ArtLoader {
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .centerCrop()
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // load(ivArt, tvLetter, song)
+    // ── load(ivArt, tvLetter, song) ───────────────────────────────────────────
     // Usato in: SongAdapter, GroupedAdapter, MoodSectionsFragment, MainActivity
-    // ─────────────────────────────────────────────────────────────────────────
 
     fun load(ivArt: ImageView, tvLetter: TextView, song: Song) {
         val ctx = ivArt.context
@@ -45,151 +42,111 @@ object ArtLoader {
             else -> null
         }
 
-        if (uri == null) {
-            showPlaceholder(ivArt, tvLetter, song)
-            return
-        }
+        if (uri == null) { showPlaceholder(ivArt, tvLetter, song); return }
 
-        Glide.with(ctx)
-            .load(uri)
-            .apply(OPTIONS)
+        Glide.with(ctx).load(uri).apply(OPTIONS)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>,
-                    isFirstResource: Boolean
+                    e: GlideException?, model: Any?,
+                    target: Target<Drawable>, isFirstResource: Boolean
                 ): Boolean {
                     if (song.albumId > 0L && song.coverPath.isNotBlank()) {
                         Glide.with(ctx).load(song.coverPath).apply(OPTIONS).into(ivArt)
-                        ivArt.visibility    = View.VISIBLE
-                        tvLetter.visibility = View.GONE
-                    } else {
-                        showPlaceholder(ivArt, tvLetter, song)
-                    }
+                        ivArt.visibility = View.VISIBLE; tvLetter.visibility = View.GONE
+                    } else showPlaceholder(ivArt, tvLetter, song)
                     return true
                 }
 
                 override fun onResourceReady(
-                    resource: Drawable,
-                    model: Any,
-                    target: Target<Drawable>,
-                    dataSource: DataSource,
-                    isFirstResource: Boolean
+                    resource: Drawable, model: Any,
+                    target: Target<Drawable>, dataSource: DataSource, isFirstResource: Boolean
                 ): Boolean {
-                    ivArt.visibility    = View.VISIBLE
-                    tvLetter.visibility = View.GONE
+                    ivArt.visibility = View.VISIBLE; tvLetter.visibility = View.GONE
                     return false
                 }
-            })
-            .into(ivArt)
+            }).into(ivArt)
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // loadPlayer(imageView, placeholderView, tvChar, onNoArt)
-    // Usato in: PlayerFragment (con parametri nominati)
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── loadPlayer(imageView, placeholderView, tvChar, song, onNoArt) ─────────
+    // Usato in: PlayerFragment (parametri nominati)
 
     fun loadPlayer(
         imageView: ImageView,
         placeholderView: View,
         tvChar: TextView,
+        song: Song,
         onNoArt: () -> Unit
     ) {
         val ctx = imageView.context
         val bigOptions = OPTIONS.clone().override(560, 560)
 
-        val song: Song? = imageView.tag as? Song  // il caller deve fare ivArtwork.tag = song
-        // Fallback: recupera uri direttamente dal tag se disponibile,
-        // altrimenti usa la logica standard.
-
         val uri: Any? = when {
-            song != null && song.albumId > 0L -> ContentUris.withAppendedId(
+            song.albumId > 0L -> ContentUris.withAppendedId(
                 Uri.parse("content://media/external/audio/albumart"), song.albumId
             )
-            song != null && song.coverPath.isNotBlank() -> song.coverPath
+            song.coverPath.isNotBlank() -> song.coverPath
             else -> null
         }
 
         if (uri == null) {
-            imageView.visibility      = View.INVISIBLE
+            imageView.visibility = View.INVISIBLE
             placeholderView.visibility = View.VISIBLE
-            tvChar.visibility          = View.VISIBLE
-            onNoArt()
-            return
+            tvChar.visibility = View.VISIBLE
+            onNoArt(); return
         }
 
-        Glide.with(ctx)
-            .load(uri)
-            .apply(bigOptions)
+        Glide.with(ctx).load(uri).apply(bigOptions)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>,
-                    isFirstResource: Boolean
+                    e: GlideException?, model: Any?,
+                    target: Target<Drawable>, isFirstResource: Boolean
                 ): Boolean {
-                    if (song != null && song.albumId > 0L && song.coverPath.isNotBlank()) {
-                        Glide.with(ctx)
-                            .load(song.coverPath)
-                            .apply(bigOptions)
+                    if (song.albumId > 0L && song.coverPath.isNotBlank()) {
+                        Glide.with(ctx).load(song.coverPath).apply(bigOptions)
                             .listener(object : RequestListener<Drawable> {
                                 override fun onLoadFailed(
-                                    e: GlideException?,
-                                    model: Any?,
-                                    target: Target<Drawable>,
-                                    isFirstResource: Boolean
+                                    e: GlideException?, model: Any?,
+                                    target: Target<Drawable>, isFirstResource: Boolean
                                 ): Boolean {
-                                    imageView.visibility       = View.INVISIBLE
+                                    imageView.visibility = View.INVISIBLE
                                     placeholderView.visibility = View.VISIBLE
-                                    tvChar.visibility           = View.VISIBLE
-                                    onNoArt()
-                                    return true
+                                    tvChar.visibility = View.VISIBLE
+                                    onNoArt(); return true
                                 }
-
                                 override fun onResourceReady(
-                                    resource: Drawable,
-                                    model: Any,
-                                    target: Target<Drawable>,
-                                    dataSource: DataSource,
+                                    resource: Drawable, model: Any,
+                                    target: Target<Drawable>, dataSource: DataSource,
                                     isFirstResource: Boolean
                                 ): Boolean {
-                                    imageView.visibility       = View.VISIBLE
+                                    imageView.visibility = View.VISIBLE
                                     placeholderView.visibility = View.GONE
-                                    tvChar.visibility           = View.GONE
-                                    return false
+                                    tvChar.visibility = View.GONE; return false
                                 }
-                            })
-                            .into(imageView)
+                            }).into(imageView)
                     } else {
-                        imageView.visibility       = View.INVISIBLE
+                        imageView.visibility = View.INVISIBLE
                         placeholderView.visibility = View.VISIBLE
-                        tvChar.visibility           = View.VISIBLE
+                        tvChar.visibility = View.VISIBLE
                         onNoArt()
                     }
                     return true
                 }
 
                 override fun onResourceReady(
-                    resource: Drawable,
-                    model: Any,
-                    target: Target<Drawable>,
-                    dataSource: DataSource,
-                    isFirstResource: Boolean
+                    resource: Drawable, model: Any,
+                    target: Target<Drawable>, dataSource: DataSource, isFirstResource: Boolean
                 ): Boolean {
-                    imageView.visibility       = View.VISIBLE
+                    imageView.visibility = View.VISIBLE
                     placeholderView.visibility = View.GONE
-                    tvChar.visibility           = View.GONE
-                    return false
+                    tvChar.visibility = View.GONE; return false
                 }
-            })
-            .into(imageView)
+            }).into(imageView)
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── Utilità ───────────────────────────────────────────────────────────────
 
     private fun showPlaceholder(ivArt: ImageView, tvLetter: TextView, song: Song) {
-        ivArt.visibility    = View.INVISIBLE
+        ivArt.visibility = View.INVISIBLE
         tvLetter.visibility = View.VISIBLE
         tvLetter.text = song.title.firstOrNull()?.uppercaseChar()?.toString() ?: "♪"
     }
