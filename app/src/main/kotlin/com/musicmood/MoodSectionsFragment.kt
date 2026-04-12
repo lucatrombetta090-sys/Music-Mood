@@ -1,12 +1,8 @@
 package com.musicmood
 
-import android.content.ContentUris
-import android.graphics.BitmapFactory
 import android.graphics.drawable.GradientDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -49,7 +45,6 @@ class MoodSectionsFragment : Fragment() {
         }
         tvEmpty.visibility = View.GONE
 
-        // Raggruppa per mood effettivo mantenendo ordine MOODS
         val grouped = analyzed.groupBy { it.effectiveMood }
         SongAdapter.MOODS.forEach { mood ->
             val songs = grouped[mood] ?: return@forEach
@@ -64,7 +59,6 @@ class MoodSectionsFragment : Fragment() {
         val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
         val WRAP  = LinearLayout.LayoutParams.WRAP_CONTENT
 
-        // Sezione wrapper
         val section = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
             val lp = LinearLayout.LayoutParams(MATCH, WRAP)
@@ -72,13 +66,11 @@ class MoodSectionsFragment : Fragment() {
             layoutParams = lp
         }
 
-        // Header row: emoji + mood name + conteggio
         val header = LinearLayout(ctx).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(dp(16), dp(14), dp(16), dp(8))
             gravity = android.view.Gravity.CENTER_VERTICAL
         }
-        // Mood dot
         val dot = View(ctx).apply {
             val bg = GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(color) }
             background = bg
@@ -86,7 +78,6 @@ class MoodSectionsFragment : Fragment() {
             lp.setMargins(0, 0, dp(10), 0)
             layoutParams = lp
         }
-        // Mood label
         val label = TextView(ctx).apply {
             text = mood
             textSize = 16f
@@ -94,7 +85,6 @@ class MoodSectionsFragment : Fragment() {
             setTypeface(null, android.graphics.Typeface.BOLD)
             layoutParams = LinearLayout.LayoutParams(0, WRAP, 1f)
         }
-        // Count
         val count = TextView(ctx).apply {
             text = "${songs.size} brani  ›"
             textSize = 12f
@@ -109,7 +99,6 @@ class MoodSectionsFragment : Fragment() {
         header.addView(count)
         section.addView(header)
 
-        // Horizontal RecyclerView
         val rv = RecyclerView(ctx).apply {
             layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false)
             adapter = MoodCardAdapter(songs.sortedByDescending { it.energy }) { song ->
@@ -125,7 +114,6 @@ class MoodSectionsFragment : Fragment() {
         }
         section.addView(rv)
 
-        // Separator
         val sep = View(ctx).apply {
             setBackgroundColor(0xFF222222L.toInt())
             layoutParams = LinearLayout.LayoutParams(MATCH, 1)
@@ -153,25 +141,8 @@ class MoodCardAdapter(
         val dot: View               = v.findViewById(R.id.cardMoodDot)
 
         fun bind(song: Song) {
-            val bmp = if (song.albumId > 0L) {
-                try {
-                    val uri = ContentUris.withAppendedId(
-                        Uri.parse("content://media/external/audio/albumart"), song.albumId)
-                    itemView.context.contentResolver.openInputStream(uri)?.use {
-                        BitmapFactory.decodeStream(it)
-                    }
-                } catch (_: Exception) { null }
-            } else null
-
-            if (bmp != null) {
-                art.setImageBitmap(bmp)
-                art.visibility    = View.VISIBLE
-                letter.visibility = View.GONE
-            } else {
-                art.visibility    = View.INVISIBLE
-                letter.visibility = View.VISIBLE
-                letter.text = song.title.firstOrNull()?.uppercaseChar()?.toString() ?: "♪"
-            }
+            // ── Album art asincrono ──
+            ArtLoader.load(art, letter, song)
 
             title.text  = song.title.ifBlank { "Sconosciuto" }
             artist.text = song.artist.ifBlank { "Artista sconosciuto" }
