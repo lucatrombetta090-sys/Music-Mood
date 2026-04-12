@@ -1,151 +1,168 @@
 package com.musicmood
 
 import android.content.ContentUris
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import java.io.File
 
+/**
+ * Helper per il caricamento asincrono delle copertine tramite Glide 4.
+ * Usato in alternativa al caricamento manuale via BitmapFactory quando
+ * si vuole sfruttare il caching e il caricamento asincrono di Glide.
+ */
 object ArtLoader {
 
+    private val defaultOptions = RequestOptions()
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .centerCrop()
+
     /**
-     * Carica la copertina album in modo asincrono con fallback.
-     * Prova prima MediaStore (albumId), poi il file scaricato (coverPath).
-     * Mostra la lettera iniziale mentre carica, la nasconde se la copertina arriva.
-     * Usato in RecyclerView adapter (SongAdapter, GroupedAdapter, MoodCardAdapter).
+     * Carica la copertina da MediaStore (albumId) in una ImageView.
+     * Se non disponibile, mostra il placeholder.
      */
-    fun load(imageView: ImageView, letterView: TextView, song: Song) {
-        // Placeholder lettera visibile subito — verrà nascosta se l'immagine carica
-        letterView.text = song.title.firstOrNull()?.uppercaseChar()?.toString() ?: "♪"
-        letterView.visibility = View.VISIBLE
-        imageView.visibility  = View.INVISIBLE
+    fun loadAlbumArt(
+        context: Context,
+        albumId: Long,
+        into: ImageView,
+        onSuccess: (() -> Unit)? = null,
+        onFailure: (() -> Unit)? = null
+    ) {
+        val uri = ContentUris.withAppendedId(
+            Uri.parse("content://media/external/audio/albumart"), albumId
+        )
+        Glide.with(context)
+            .load(uri)
+            .apply(defaultOptions)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onFailure?.invoke()
+                    return false
+                }
 
-        val ctx = imageView.context
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onSuccess?.invoke()
+                    return false
+                }
+            })
+            .into(into)
+    }
 
-        val albumUri: Uri? = if (song.albumId > 0L)
-            ContentUris.withAppendedId(
-                Uri.parse("content://media/external/audio/albumart"), song.albumId)
-        else null
+    /**
+     * Carica la copertina da un path locale (coverPath salvato in cache).
+     */
+    fun loadFromFile(
+        context: Context,
+        filePath: String,
+        into: ImageView,
+        onSuccess: (() -> Unit)? = null,
+        onFailure: (() -> Unit)? = null
+    ) {
+        Glide.with(context)
+            .load(filePath)
+            .apply(defaultOptions)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onFailure?.invoke()
+                    return false
+                }
 
-        val coverFile: File? = song.coverPath
-            .takeIf { it.isNotBlank() }
-            ?.let { File(it) }
-            ?.takeIf { it.exists() }
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onSuccess?.invoke()
+                    return false
+                }
+            })
+            .into(into)
+    }
 
-        fun showImage() {
-            imageView.post {
-                imageView.visibility  = View.VISIBLE
-                letterView.visibility = View.GONE
-            }
-        }
-
-        fun loadFile(file: File) {
-            Glide.with(ctx).load(file)
+    /**
+     * Carica la copertina di un brano scegliendo automaticamente la sorgente:
+     * prima MediaStore (albumId), poi coverPath locale.
+     * Chiama onFailure se nessuna sorgente è disponibile.
+     */
+    fun loadSongArt(
+        context: Context,
+        song: Song,
+        into: ImageView,
+        onSuccess: (() -> Unit)? = null,
+        onFailure: (() -> Unit)? = null
+    ) {
+        if (song.albumId > 0L) {
+            val uri = ContentUris.withAppendedId(
+                Uri.parse("content://media/external/audio/albumart"), song.albumId
+            )
+            Glide.with(context)
+                .load(uri)
+                .apply(defaultOptions)
                 .listener(object : RequestListener<Drawable> {
-                    override fun onResourceReady(
-                        r: Drawable, m: Any, t: Target<Drawable>, d: DataSource, f: Boolean
-                    ): Boolean { showImage(); return false }
                     override fun onLoadFailed(
-                        e: GlideException?, m: Any, t: Target<Drawable>, f: Boolean
-                    ) = false
-                })
-                .into(imageView)
-        }
-
-        when {
-            albumUri != null -> Glide.with(ctx).load(albumUri)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onResourceReady(
-                        r: Drawable, m: Any, t: Target<Drawable>, d: DataSource, f: Boolean
-                    ): Boolean { showImage(); return false }
-                    override fun onLoadFailed(
-                        e: GlideException?, m: Any, t: Target<Drawable>, f: Boolean
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
                     ): Boolean {
-                        if (coverFile != null) loadFile(coverFile)
+                        // Fallback su coverPath se MediaStore fallisce
+                        if (song.coverPath.isNotBlank()) {
+                            loadFromFile(context, song.coverPath, into, onSuccess, onFailure)
+                        } else {
+                            onFailure?.invoke()
+                        }
+                        return true // intercettiamo per gestire il fallback
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        onSuccess?.invoke()
                         return false
                     }
                 })
-                .into(imageView)
-            coverFile != null -> loadFile(coverFile)
-            // Nessuna sorgente → lettera rimane visibile
+                .into(into)
+        } else if (song.coverPath.isNotBlank()) {
+            loadFromFile(context, song.coverPath, into, onSuccess, onFailure)
+        } else {
+            onFailure?.invoke()
         }
     }
 
     /**
-     * Variante per il Player: il placeholder è una View generica (LinearLayout)
-     * con un TextView figlio per il carattere.
-     * onNoArt viene chiamata quando nessuna sorgente è disponibile
-     * (es. per mostrare il bottone download).
+     * Annulla eventuali richieste pendenti su una ImageView.
+     * Da chiamare in onRecycled() dell'adapter.
      */
-    fun loadPlayer(
-        imageView: ImageView,
-        placeholderView: View,
-        tvChar: TextView,
-        song: Song,
-        onNoArt: () -> Unit = {}
-    ) {
-        tvChar.text = song.title.firstOrNull()?.uppercaseChar()?.toString() ?: "♪"
-        placeholderView.visibility = View.VISIBLE
-        imageView.visibility = View.INVISIBLE
-
-        val ctx = imageView.context
-
-        val albumUri: Uri? = if (song.albumId > 0L)
-            ContentUris.withAppendedId(
-                Uri.parse("content://media/external/audio/albumart"), song.albumId)
-        else null
-
-        val coverFile: File? = song.coverPath
-            .takeIf { it.isNotBlank() }
-            ?.let { File(it) }
-            ?.takeIf { it.exists() }
-
-        fun showImage() {
-            imageView.post {
-                imageView.visibility   = View.VISIBLE
-                placeholderView.visibility = View.GONE
-            }
-        }
-
-        fun fail() { imageView.post { onNoArt() } }
-
-        fun loadFile(file: File, isFinalFallback: Boolean = false) {
-            Glide.with(ctx).load(file)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onResourceReady(
-                        r: Drawable, m: Any, t: Target<Drawable>, d: DataSource, f: Boolean
-                    ): Boolean { showImage(); return false }
-                    override fun onLoadFailed(
-                        e: GlideException?, m: Any, t: Target<Drawable>, f: Boolean
-                    ): Boolean { if (isFinalFallback) fail(); return false }
-                })
-                .into(imageView)
-        }
-
-        when {
-            albumUri != null -> Glide.with(ctx).load(albumUri)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onResourceReady(
-                        r: Drawable, m: Any, t: Target<Drawable>, d: DataSource, f: Boolean
-                    ): Boolean { showImage(); return false }
-                    override fun onLoadFailed(
-                        e: GlideException?, m: Any, t: Target<Drawable>, f: Boolean
-                    ): Boolean {
-                        if (coverFile != null) loadFile(coverFile, isFinalFallback = true)
-                        else fail()
-                        return false
-                    }
-                })
-                .into(imageView)
-            coverFile != null -> loadFile(coverFile, isFinalFallback = true)
-            else -> fail()
-        }
+    fun cancel(context: Context, into: ImageView) {
+        Glide.with(context).clear(into)
     }
 }
