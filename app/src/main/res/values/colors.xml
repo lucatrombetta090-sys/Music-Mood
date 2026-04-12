@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#080810</color>
+    <color name="surface">#10101C</color>
+    <color name="elevated">#18182A</color>
+    <color name="card">#1E1E30</color>
+    <color name="primary">#6C63FF</color>
+    <color name="primary_dark">#5248D4</color>
+    <color name="text">#FFFFFF</color>
+    <color name="subtext">#8888AA</color>
+    <color name="divider">#252538</color>
+
+    <!-- Mood colors -->
+    <color name="mood_energico">#F59E0B</color>
+    <color name="mood_positivo">#10D97C</color>
+    <color name="mood_aggressivo">#EF4444</color>
+    <color name="mood_malinconico">#7C3AED</color>
+
+    <color name="accent">#6C63FF</color>
+</resources>
