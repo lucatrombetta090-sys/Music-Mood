@@ -1,5 +1,9 @@
-# Music-Mood Legal
+# Music-Mood
 
-Documenti legali pubblici per Music-Mood.
+Documentazione pubblica per l'app Android Music-Mood.
 
-- privacy_policy.md
+## Privacy Policy
+
+La Privacy Policy ufficiale di Music-Mood è disponibile qui:
+
+privacy_policy.md
