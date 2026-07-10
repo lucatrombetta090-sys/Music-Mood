@@ -1,53 +1,68 @@
-# Music-Mood — Google Play Data Safety Draft
+# Music-Mood — Bozza Google Play Data Safety
 
-Data aggiornamento: 8 luglio 2026
+Data aggiornamento: 10 luglio 2026  
+Privacy Policy ufficiale:  
+[Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
 
-Privacy Policy ufficiale:
+Questo documento è una bozza operativa per compilare la sezione **Data Safety** di Google Play Console.
 
-https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy
+Non è consulenza legale. Le dichiarazioni finali devono essere verificate rispetto alla build effettivamente pubblicata, alle librerie incluse, agli SDK attivi e alle funzionalità abilitate.
 
-Questo documento è una bozza operativa per compilare la sezione Data Safety di Google Play Console.
-
-Non è consulenza legale. Le dichiarazioni finali devono essere verificate rispetto alla build pubblicata, alle librerie effettivamente incluse e alle funzionalità abilitate.
+---
 
 ## 1. Panoramica app
 
-Music-Mood è un'app Android che analizza la libreria musicale locale dell'utente, classifica i brani per mood e genera statistiche personali e Weekly Mood Report.
+Music-Mood è un'app Android che analizza la libreria musicale locale dell'utente, classifica i brani per mood e genera statistiche personali, BubbleMap, profilo musicale e Weekly Mood Report.
 
 L'app funziona principalmente in locale sul dispositivo.
 
 Funzionalità principali:
 
-- lettura libreria audio locale
+- lettura della libreria audio locale
+- ricarica manuale della libreria da Impostazioni
+- player musicale e mini-player
 - analisi mood dei brani
-- player musicale
-- statistiche
-- BubbleMap
-- profilo musicale
+- classificazione opzionale YAMNet / TensorFlow Lite
+- analisi DSP locale
+- metriche valenza, arousal, BPM e tonalità
+- BubbleMap valenza/arousal
+- statistiche aggregate
+- profilo musicale personale
+- calibrazione e reset calibrazione
+- playlist automatiche mood-safe
 - Weekly Mood Report
 - integrazione opzionale Last.fm
 - export CSV
-- condivisione manuale di immagini/report
+- condivisione manuale di immagini profilo/report
+- supporto lingua Italiano/Inglese
+
+---
 
 ## 2. Privacy Policy URL
 
 Da inserire in Google Play Console:
 
-https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy
+[Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+
+---
 
 ## 3. Raccolta dati: impostazione generale
 
 Risposta consigliata prudenziale:
 
-L'app raccoglie o condivide alcuni tipi di dati?
+**L'app raccoglie o condivide alcuni tipi di dati?**
 
-Sì, se nella build pubblicata è inclusa e configurabile l'integrazione Last.fm, perché l'app può inviare username e API key verso l'API Last.fm quando l'utente preme manualmente Aggiorna Last.fm.
+**Sì**, se nella build pubblicata è inclusa e configurabile l'integrazione Last.fm, perché l'app può inviare username, API key e parametri necessari verso l'API Last.fm quando l'utente preme manualmente **Aggiorna Last.fm**.
 
-No, per i dati che restano esclusivamente locali sul dispositivo e non vengono inviati a un server dello sviluppatore o a terze parti.
+**No**, per i dati che restano esclusivamente locali sul dispositivo e non vengono inviati a server dello sviluppatore o a terze parti.
+
+Nota importante: Google Play richiede che il Data Safety form rifletta in modo accurato raccolta, condivisione e gestione dei dati dell'app, inclusi eventuali SDK o terze parti usate dall'app.
+
+---
 
 ## 4. Dati locali trattati ma non inviati a backend proprietario
 
-Questi dati sono usati localmente dall'app:
+Questi dati possono essere usati localmente dall'app:
 
 - titolo brano
 - artista
@@ -64,14 +79,64 @@ Questi dati sono usati localmente dall'app:
 - valenza
 - arousal
 - tonalità
+- modalità maggiore/minore, se disponibile
 - mood manuale impostato dall'utente
 - eventi di ascolto locali
 - Weekly Report locale
+- profilo musicale personale
+- fingerprint emotivo
+- dati di calibrazione
 - preferenze utente
+- lingua scelta dall'utente
 
 Questi dati sono conservati localmente nel dispositivo e sono usati per funzionalità dell'app.
 
-## 5. Integrazione opzionale Last.fm
+---
+
+## 5. Ricarica libreria
+
+L'app include un pulsante **Ricarica libreria** nelle Impostazioni.
+
+La funzione esegue una nuova lettura della libreria audio locale tramite MediaStore per rilevare nuovi brani aggiunti dopo l'installazione.
+
+La funzione non ha lo scopo di cancellare:
+
+- analisi mood esistenti
+- mood manuali
+- cache Last.fm
+- report settimanali
+- dati di calibrazione
+
+Data Safety: questa funzione non introduce una nuova categoria di dati rispetto all'accesso alla libreria audio locale. Rafforza solo l'esigenza di dichiarare correttamente l'accesso ai file/audio locali se richiesto dalla Play Console.
+
+---
+
+## 6. Analisi mood, YAMNet, DSP, valenza e arousal
+
+L'app può analizzare localmente i brani per stimare:
+
+- mood
+- confidenza
+- valenza
+- arousal
+- BPM
+- tonalità
+- modo maggiore/minore
+
+L'app può usare:
+
+- motore DSP locale
+- classificatore opzionale YAMNet/TensorFlow Lite
+- calibrazione personalizzata
+- mood manuale impostato dall'utente
+
+I file audio non vengono caricati su un backend proprietario nella configurazione attuale.
+
+Data Safety: non dichiarare upload di audio se la build pubblicata analizza i file esclusivamente sul dispositivo e non li invia a server esterni.
+
+---
+
+## 7. Integrazione opzionale Last.fm
 
 L'integrazione Last.fm è opzionale.
 
@@ -82,7 +147,7 @@ Se l'utente configura Last.fm, l'app può salvare localmente:
 - riepilogo locale Last.fm
 - cache locale del riepilogo Last.fm
 
-Quando l'utente preme Aggiorna Last.fm, l'app può chiamare l'API Last.fm.
+Quando l'utente preme **Aggiorna Last.fm**, l'app può chiamare l'API Last.fm.
 
 Dati Last.fm recuperati o trattati dall'app:
 
@@ -93,14 +158,25 @@ Dati Last.fm recuperati o trattati dall'app:
 - URL Last.fm del brano, se disponibile
 - immagine o copertina, se disponibile
 - stato now playing, se disponibile
+- tag musicali, se usati dalla classificazione
 
-## 6. Data types — bozza Play Console
+Dati potenzialmente inviati a Last.fm:
+
+- username Last.fm
+- API key Last.fm
+- parametri necessari alla richiesta API
+
+Data Safety: dichiarare prudenzialmente la condivisione verso Last.fm se l'integrazione è inclusa nella build pubblicata e utilizzabile dall'utente.
+
+---
+
+## 8. Data types — bozza Play Console
 
 ### Personal info
 
 Possibile dichiarazione prudenziale:
 
-- User IDs
+- **User IDs**
 
 Motivo:
 
@@ -109,6 +185,7 @@ Motivo:
 Purpose:
 
 - App functionality
+- Personalization, se usato per mostrare report o riepiloghi personalizzati
 
 Optional?
 
@@ -116,7 +193,7 @@ Optional?
 
 Shared?
 
-- Sì, prudenzialmente, verso Last.fm quando l'utente usa il pulsante Aggiorna Last.fm
+- Sì, prudenzialmente, verso Last.fm quando l'utente usa manualmente Aggiorna Last.fm
 
 Encrypted in transit?
 
@@ -127,11 +204,13 @@ Note:
 - L'app non vende questi dati.
 - L'app non usa backend proprietario per questi dati.
 
+---
+
 ### App activity
 
 Possibile dichiarazione prudenziale:
 
-- Other user-generated content oppure Other actions, se Play Console richiede una categoria per gli ascolti recenti Last.fm o gli eventi di ascolto
+- Other actions oppure altra categoria equivalente, se Play Console richiede di dichiarare eventi di ascolto, report, interazioni o attività musicali.
 
 Purpose:
 
@@ -140,25 +219,29 @@ Purpose:
 
 Optional?
 
-- Per Last.fm: sì
-- Per eventi locali necessari al Weekly Report: dipende dalla funzionalità usata dall'utente
+- Last.fm: sì
+- Eventi locali necessari al Weekly Report: dipende da come la funzionalità è presentata nella build pubblicata
 
 Shared?
 
 - Eventi locali: no, se restano sul dispositivo
-- Last.fm: sì, prudenzialmente, solo per la chiamata Last.fm avviata dall'utente
+- Last.fm: sì, prudenzialmente, solo per chiamate Last.fm avviate dall'utente
+
+---
 
 ### Audio
 
 Possibile impostazione:
 
-- Non dichiarare come collected se i file audio e la libreria restano esclusivamente sul dispositivo e non sono inviati a server esterni.
+- Non dichiarare come collected/uploaded se i file audio e la libreria restano esclusivamente sul dispositivo e non sono inviati a server esterni.
 
 Nota:
 
 - L'app richiede accesso alla libreria audio per funzionare.
 - L'app analizza localmente le caratteristiche musicali.
-- L'app non carica i file audio su backend proprietario nella configurazione attuale.
+- L'app non carica file audio su backend proprietario nella configurazione attuale.
+
+---
 
 ### Photos and videos
 
@@ -166,6 +249,8 @@ Possibile impostazione:
 
 - Non dichiarare, se l'app non accede alla galleria foto/video.
 - Le copertine album fanno parte dei metadati musicali o vengono caricate come immagini associate ai brani, non come raccolta della galleria foto dell'utente.
+
+---
 
 ### Device or other IDs
 
@@ -178,8 +263,10 @@ Da verificare prima della pubblicazione:
 - Firebase Analytics
 - Crashlytics
 - AdMob
-- altri SDK di analytics o advertising
+- altri SDK analytics o advertising
 - SDK che leggono Android ID o advertising ID
+
+---
 
 ### Location
 
@@ -216,36 +303,47 @@ Impostazione consigliata:
 Possibile riflessione:
 
 - L'app accede ai file audio tramite permessi media/audio.
-- Se Play Console distingue specificamente file audio da documenti generici, usare la voce più specifica relativa ad audio/media.
+- Se Play Console distingue specificamente audio/media da documenti generici, usare la voce più specifica relativa ad audio/media.
 - Non dichiarare documenti generici se l'app non legge documenti dell'utente.
 
-## 7. Security practices
+---
 
-Risposte consigliate:
+## 9. Security practices
 
 ### Is all user data collected by your app encrypted in transit?
 
-Sì, per le chiamate Last.fm, se effettuate tramite HTTPS.
+Risposta consigliata:
+
+- Sì, per le chiamate Last.fm, se effettuate tramite HTTPS.
 
 ### Do you provide a way for users to request that their data is deleted?
 
 Risposta prudenziale:
 
-Sì, se la privacy policy indica che l'utente può cancellare i dati app dalle impostazioni Android o rimuovere configurazioni locali.
+- Sì, se la Privacy Policy indica che l'utente può cancellare i dati app dalle impostazioni Android o rimuovere configurazioni locali.
 
-Valutazione:
+Funzioni disponibili o rilevanti:
 
-- Se Play Console richiede un meccanismo specifico dentro l'app, aggiungere in futuro un pulsante per cancellare dati Last.fm e cache locale.
-- Attualmente è già possibile cancellare dati app via impostazioni Android.
-- L'app dovrebbe prevedere o mantenere funzioni per cancellare analisi locali, ove disponibili.
+- rimozione configurazione Last.fm
+- rimozione cache Last.fm
+- cancellazione analisi mood locali, se disponibile nella build
+- reset calibrazione
+- cancellazione dati app dalle impostazioni Android
+- disinstallazione app
 
-## 8. Data sharing
+Suggerimento futuro:
+
+- se Play Console richiede un meccanismo più esplicito, valutare un pulsante unico “Cancella dati app locali” o una sezione dedicata alla cancellazione dei dati locali.
+
+---
+
+## 10. Data sharing
 
 Possibile dichiarazione:
 
 L'app non vende dati utente.
 
-L'app può trasferire dati a Last.fm solo quando l'utente configura Last.fm e preme manualmente Aggiorna Last.fm.
+L'app può trasferire dati a Last.fm solo quando l'utente configura Last.fm e preme manualmente **Aggiorna Last.fm**.
 
 Dati potenzialmente trasferiti a Last.fm:
 
@@ -260,7 +358,9 @@ Dati ricevuti da Last.fm:
 - immagini/copertine, se disponibili
 - tag musicali, se richiesti dalla funzione di classificazione
 
-## 9. Retention and deletion
+---
+
+## 11. Retention and deletion
 
 Dati conservati localmente:
 
@@ -268,8 +368,11 @@ Dati conservati localmente:
 - eventi di ascolto
 - report settimanali
 - preferenze
+- lingua selezionata
 - configurazione Last.fm
 - cache riepilogo Last.fm
+- dati di calibrazione
+- dati aggregati del profilo musicale
 
 Durata:
 
@@ -277,67 +380,67 @@ Durata:
 - fino a disinstallazione
 - fino a rimozione manuale, se la funzione è disponibile
 
-Suggerimento futuro:
+---
 
-- aggiungere un pulsante dedicato in Settings:
-  - Cancella cache Last.fm
-  - Rimuovi configurazione Last.fm
-  - Cancella Weekly Report
-  - Cancella eventi di ascolto
-
-## 10. Checklist prima della pubblicazione
+## 12. Checklist prima della pubblicazione
 
 - Privacy Policy online accessibile
 - Privacy Policy linkata dentro app
-- Repository tecnico privato
-- Repository pubblico solo documentale
+- Repository tecnico privato, se necessario
+- Repository pubblico solo documentale, se scelto
 - Data Safety coerente con la build
 - Nessun SDK Ads se dichiari no ads
 - Nessun SDK Analytics se dichiari no analytics
+- Nessun SDK che legge identificativi dispositivo se dichiari no Device IDs
 - Last.fm opzionale e manuale
 - API key Last.fm salvata localmente
 - Cache Last.fm locale
 - File audio non caricati su server
-- Report locale indipendente da fallback Last.fm
+- Analisi mood eseguita localmente
+- YAMNet/TFLite eseguito localmente
+- Report locale indipendente dal fallback Last.fm
 - Permessi Android coerenti con funzionalità audio
 - Email di contatto privacy compilata nella policy
+- Privacy Policy italiana e inglese coerenti
+- README/CHANGELOG aggiornati
 
-## 11. Risposte sintetiche consigliate
+---
 
-Privacy Policy:
+## 13. Risposte sintetiche consigliate
 
-https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy
+### Privacy Policy
 
-Ads:
+[Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+
+### Ads
 
 No, se non hai SDK pubblicitari.
 
-Data collected:
+### Data collected
 
 Sì, prudentemente per username/API key Last.fm e dati Last.fm opzionali, se l'integrazione è nella build pubblicata.
 
-Data shared:
+### Data shared
 
 Sì, prudentemente verso Last.fm, solo quando l'utente usa l'integrazione opzionale.
 
-Data encrypted in transit:
+### Data encrypted in transit
 
 Sì, per chiamate Last.fm via HTTPS.
 
-User deletion:
+### User deletion
 
-Sì, tramite cancellazione dati app e funzionalità locali disponibili. Valutare aggiunta di pulsante dedicato per maggiore chiarezza.
+Sì, tramite cancellazione dati app, rimozione configurazioni locali e funzionalità disponibili nell'app.
 
-Purpose:
+### Purpose
 
 - App functionality
 - Personalization
 
-Optional data:
+### Optional data
 
 Sì per Last.fm.
 
-Required data:
+### Required data
 
 Accesso alla libreria audio locale necessario per le funzionalità principali dell'app.
-`
