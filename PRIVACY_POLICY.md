@@ -335,7 +335,7 @@ L'utente può:
 
 ## 24. Privacy Policy online
 
-La Privacy Policy ufficiale di Music-Mood è disponibile online: [Privacy Policy online](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+La Privacy Policy ufficiale di Music-Mood è disponibile online: [Privacy Policy online](https://lucatrombetta090-sys.github.io/Music-Mood/PRIVACY_POLICY)
 
 Una copia della Privacy Policy può essere visualizzata anche nella schermata Info app.
 
