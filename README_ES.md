@@ -239,7 +239,7 @@ Los únicos servicios externos que se contactan son:
 - **Last.fm**, solo si lo configuras tú
 - **Apple iTunes** y **Deezer**, para las carátulas que faltan (solo título y artista)
 
-La Política de Privacidad está disponible aquí: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy).
+La Política de Privacidad está disponible aquí: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/PRIVACY_POLICY_ES).
 
 ## 🛠️ Tecnologías
 
