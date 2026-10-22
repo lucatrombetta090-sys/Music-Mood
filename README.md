@@ -239,7 +239,7 @@ Gli unici servizi esterni contattati sono:
 - **Last.fm**, solo se lo configuri tu
 - **Apple iTunes** e **Deezer**, per le copertine mancanti (solo titolo e artista)
 
-La Privacy Policy è disponibile qui: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy).
+La Privacy Policy è disponibile qui: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/PRIVACY_POLICY).
 
 ## 🛠️ Stack tecnico
 
