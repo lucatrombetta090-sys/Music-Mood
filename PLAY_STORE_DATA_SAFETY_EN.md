@@ -32,7 +32,7 @@ Main features:
 ## 2. Privacy Policy URL
 
 To be entered in Google Play Console:
-[Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+[Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/PRIVACY_POLICY)
 
 ## 3. Data collection: general setting
 
