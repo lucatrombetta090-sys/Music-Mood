@@ -239,7 +239,7 @@ The only external services contacted are:
 - **Last.fm**, only if you configure it
 - **Apple iTunes** and **Deezer**, for missing artwork (title and artist only)
 
-The Privacy Policy is available here: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy).
+The Privacy Policy is available here: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/PRIVACY_POLICY_EN).
 
 ## 🛠️ Technical stack
 
