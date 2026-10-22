@@ -1,7 +1,7 @@
 # Music-Mood — Bozza Google Play Data Safety
 
 Data aggiornamento: 10 luglio 2026
-Privacy Policy ufficiale: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+Privacy Policy ufficiale: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/PRIVACY_POLICY)
 Questo documento è una bozza operativa per compilare la sezione **Data Safety** di Google Play Console.
 Non è consulenza legale. Le dichiarazioni finali devono essere verificate rispetto alla build effettivamente pubblicata, alle librerie incluse, agli SDK attivi e alle funzionalità abilitate.
 
