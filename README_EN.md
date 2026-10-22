@@ -1,10 +1,8 @@
 # 🎵 Music-Mood
 
-**Music-Mood** is an Android app that analyzes your local music library and turns every song into a personal emotional map: mood, confidence, BPM, key, valence, arousal, music profile, BubbleMap and Weekly Mood Report.
+**Music-Mood** is an Android app that analyzes your local music library and turns every song into a personal emotional map: mood, BPM, key, valence, arousal, music profile, BubbleMap and Weekly Mood Report.
 
 The goal is simple: **listen to your music in a smarter, more personal and more visual way**.
-
----
 
 ## ✨ Why install Music-Mood
 
@@ -13,18 +11,17 @@ Music-Mood is not just a music player. It helps you discover **how your music fe
 With Music-Mood you can:
 
 - 🎧 explore your local music library
-- 🧠 classify songs into 9 musical moods
+- 🧠 classify songs into 9 musical moods, with a secondary mood when a song has two
+- ℹ️ understand **why** a song has its mood
 - 🤖 use YAMNet as an advanced audio classifier
 - 📍 visualize songs on the valence/arousal BubbleMap
-- 📊 generate aggregate statistics
+- 📊 generate aggregate statistics and export them to CSV
 - 🧬 build your personal music profile
 - 🎯 calibrate the classifier on your own taste
 - 📆 create a Weekly Mood Report
 - 🖼️ share profile and report images
-- 🌍 use the app in Italian or English
-- 🔄 refresh your library when you add new songs
-
----
+- 🌍 use the app in Italian, English or Spanish
+- 🔄 refresh and re-analyze your library without losing your choices
 
 ## 🧠 The emotional engine: mood, valence and arousal
 
@@ -36,17 +33,17 @@ Music-Mood interprets each song through a two-dimensional emotional model based 
 
 In Music-Mood, valence is represented as a continuous axis:
 
-```text
+```
 negative  ─────────────── positive
 ```
 
 ### ⚡ Arousal
 
-**Arousal** represents the activation level or intensity of the response: how calm, soft and relaxed a song is, or how energetic, intense and activating it feels.
+**Arousal** represents the activation level or intensity: how calm, soft and relaxed a song is, or how energetic, intense and activating it feels.
 
 In Music-Mood, arousal is represented as a continuous axis:
 
-```text
+```
 calm  ─────────────── intense
 ```
 
@@ -54,15 +51,15 @@ calm  ─────────────── intense
 
 The **BubbleMap** uses these two axes to position songs in a continuous emotional space:
 
-```text
+```
                     High arousal
-                        ↑
-        intense/dark    │   positive/intense
-                        │
-Negative valence  ──────┼──────  Positive valence
-                        │
-       sad/calm         │   positive/calm
-                        ↓
+                         ↑
+        intense/dark     │   positive/intense
+                         │
+Negative valence  ───────┼───────  Positive valence
+                         │
+         sad/calm        │   positive/calm
+                         ↓
                     Low arousal
 ```
 
@@ -75,26 +72,22 @@ Intuitive examples:
 
 This approach is inspired by the circumplex model of emotions, where emotional states are represented as combinations of valence and arousal. Useful references: [Understanding emotions to live better - Psicologia Contemporanea](https://www.psicologiacontemporanea.it/blog/capire-le-emozioni-vivere-meglio/), [Arousal - State of Mind](https://www.stateofmind.it/arousal/) and [Circumplex Model of Affect: Valence and Arousal Explained](https://psychologyfanatic.com/circumplex-model-of-arousal-and-valence/).
 
----
-
 ## 🤖 Advanced classification with YAMNet
 
 Music-Mood uses a hybrid approach:
 
 - **YAMNet** to support advanced audio classification
-- **local DSP** for music features and fallback logic
+- **local DSP** for BPM, key, valence, arousal and fallback
+- **music rules** for tricky cases: dance tracks don't end up in calm moods and slow ballads are not read as energetic
+- **Last.fm tags** as an optional second opinion
 - **personalized calibration** to adapt the model to your library
 - **manual mood override** when you want to decide the mood yourself
 
 YAMNet is a pre-trained neural network for audio classification. TensorFlow documentation describes YAMNet as a model able to predict 521 audio event classes based on the AudioSet corpus and built on a MobileNetV1 depthwise-separable convolution architecture. See: [Sound classification with YAMNet - TensorFlow Hub](https://www.tensorflow.org/hub/tutorials/yamnet) and [YAMNet README - TensorFlow Models](https://github.com/tensorflow/models/tree/master/research/audioset/yamnet).
 
-In Music-Mood, YAMNet is part of the classification engine, not the only source of truth. The app combines audio model results with metadata, DSP features, calibration and manual corrections.
-
----
+In Music-Mood, YAMNet is part of the classification engine, not the only source of truth.
 
 ## 🎭 Supported moods
-
-Music-Mood classifies songs into 9 main moods:
 
 | Mood | Meaning |
 |---|---|
@@ -108,8 +101,6 @@ Music-Mood classifies songs into 9 main moods:
 | 🎯 Focus | concentration, balance, order |
 | 🎉 Party | celebration, excitement, lightness |
 
----
-
 ## 📱 Main features
 
 ### 🎧 Local music library
@@ -118,6 +109,7 @@ Music-Mood classifies songs into 9 main moods:
 - sections for songs, artists, albums, genres, years and folders
 - folder-based navigation
 - sorting by title, BPM, valence and arousal
+- side fast-scroll index that follows the sorting: letters, BPM, valence or energy ranges
 - manual library refresh from Settings when you add new songs
 
 ### ▶️ Player and mini-player
@@ -125,27 +117,35 @@ Music-Mood classifies songs into 9 main moods:
 - integrated full-screen player
 - persistent mini-player
 - local and remote artwork
+- tap the notification to return to the playing song
+- automatic pause when another audio starts (call, video, other app) and when you unplug headphones
 - contextual menu for mood analysis and manual mood editing
 
 ### 🧠 Mood analysis
 
 - automatic mood classification
-- confidence score
+- secondary mood, when a song has two close moods
 - valence and arousal
 - estimated BPM
 - key and major/minor mode
 - YAMNet support and DSP fallback
+- **"Why this mood?"**: for each song it shows the top 3 moods in percentages, the audio factors that mattered, its position on the BubbleMap and the effect of Last.fm
 
 ### 🏷️ Manual mood
 
-You can manually correct the mood of a song. Manual mood has priority over calculated mood.
+You can manually correct the mood of a song. **Your choice always comes first**: statistics, profile, BubbleMap and automatic playlists use it immediately. Removing the correction brings back the calculated mood.
 
 Logical priority:
 
 1. user-selected manual mood
-2. locally calculated mood
-3. optional external data
-4. fallback
+2. mood calculated from audio, possibly adjusted by Last.fm
+3. fallback
+
+### 🔄 Library re-analysis
+
+When the analysis engine improves, the app offers to re-analyze your library. You can do it right away with **"Update now"** or later, also from Settings with **"Re-analyze library"**.
+
+Re-analysis only redoes the audio part: **your manual moods and Last.fm tags are kept**.
 
 ### 🫧 BubbleMap
 
@@ -163,7 +163,7 @@ Logical priority:
 - average arousal
 - most frequent key
 - top artists
-- CSV export
+- CSV export with mood, secondary mood, manual mood, scores and Last.fm status
 
 ### 🧬 Personal music profile
 
@@ -185,9 +185,13 @@ Logical priority:
 ### 🌐 Optional Last.fm integration
 
 - manual username/API key configuration
-- manual refresh
-- local Last.fm summary cache
-- integration in the Weekly Mood Report
+- recent tracks in the Weekly Report, with manual refresh
+- **Last.fm tags as a second opinion on mood**: the app reads community tags for each song
+  - Last.fm only counts if its mood is already among the top 3 suggested by the audio
+  - its effect is limited: at most 6 percentage points
+  - you can **stop and resume** the lookup from Settings or from the notification; progress is saved
+  - new songs are looked up automatically
+  - the "Use Last.fm tags" option can be turned off at any time
 
 ### 🌍 Multilingual support
 
@@ -195,10 +199,9 @@ Music-Mood supports:
 
 - 🇮🇹 Italian
 - 🇬🇧 English
+- 🇪🇸 Spanish
 
-At first launch, the app asks the user to choose a language **before requesting permissions**. The default language is Italian. Automatic/system language selection has been removed to make the behavior clearer and more predictable.
-
----
+At first launch, the app asks the user to choose a language **before requesting permissions**. The default language is Italian.
 
 ## 🎯 Personalized calibration
 
@@ -206,17 +209,17 @@ Music-Mood can adapt the classifier to your music taste.
 
 Calibration uses the already analyzed library to shift classifier centroids based on your average profile.
 
-- `0.0` = no calibration
-- `0.5` = balanced calibration
-- `1.0` = maximum adaptability
+- 0.0 = no calibration
+- 0.5 = balanced calibration
+- 1.0 = maximum adaptability
 
-Reset calibration restores the original classification and updates fingerprint, radar, top moods and archetype.
+**Reset calibration** brings every song back to its original analysis mood and updates statistics, fingerprint, radar, top moods and archetype. Your manual moods stay unchanged.
 
----
+Calibration is tied to the device: it is not restored from Android backup after a reinstall.
 
 ## 🎼 Mood-safe automatic playlists
 
-Automatic playlists are now stricter: each preset uses allowed moods, blocked moods and technical filters based on arousal/BPM/valence.
+Each preset uses allowed moods, blocked moods and technical filters based on arousal, BPM and valence.
 
 Examples:
 
@@ -225,32 +228,18 @@ Examples:
 - 🎯 Focus prioritizes Focus and Relaxed with controlled arousal
 - 💪 Workout prioritizes high energy, high BPM or high arousal
 
-If there are not enough technically matching songs, the fallback still remains limited to compatible moods.
-
----
+If there are not enough matching songs, the fallback still remains limited to compatible moods. Playlists respect your manual moods.
 
 ## 🔐 Privacy and local data
 
-Music-Mood is designed to work mainly on-device.
+Music-Mood is designed to work mainly on-device: audio analysis runs locally and there is no proprietary backend.
 
-The app may process locally:
+The only external services contacted are:
 
-- title, artist, album, duration
-- file path or folder
-- artwork
-- estimated mood
-- confidence
-- BPM
-- valence/arousal
-- key
-- manual mood
-- app preferences
-- weekly reports
-- optional Last.fm cache
+- **Last.fm**, only if you configure it
+- **Apple iTunes** and **Deezer**, for missing artwork (title and artist only)
 
 The Privacy Policy is available here: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy).
-
----
 
 ## 🛠️ Technical stack
 
@@ -263,12 +252,10 @@ The Privacy Policy is available here: [Music-Mood Privacy Policy](https://lucatr
 - AppCompat for per-app language
 - Chaquopy
 - Python
-- NumPy / SciPy / Mutagen
+- NumPy / Mutagen
 - YAMNet / TensorFlow Lite / MediaPipe Tasks Audio
 - GitHub Actions
 - Stable keystore through GitHub Secrets
-
----
 
 ## 🚀 Build
 
@@ -281,52 +268,41 @@ Recommended requirements:
 
 Debug build:
 
-```bash
+```
 ./gradlew assembleDebug
 ```
 
----
-
-## 📦 Current status
+## 📦 Current status (1.0.1)
 
 The build includes:
 
-- local library
-- player and mini-player
-- mood analysis
-- optional YAMNet
-- DSP fallback
-- advanced sorting
+- local library with fast-scroll index
+- player and mini-player with audio focus handling
+- mood analysis with YAMNet and DSP
+- secondary mood and "Why this mood?"
+- manual mood with top priority
+- Last.fm tags as a second opinion, with Stop/Resume
+- re-analysis that keeps user choices
 - BubbleMap
-- stats
+- stats and CSV export
 - music profile
 - calibration and reset calibration
 - mood-safe automatic playlists
 - Weekly Mood Report
-- optional Last.fm
-- library refresh from Settings
-- first-launch language selection
-- Italian/English support
+- Italian, English and Spanish support
 - shareable profile/report images
 - stable signing through GitHub Actions
 
----
-
 ## 🗺️ Roadmap
 
-- complete Play Store pre-release validation
 - further improve playlists and recommendations
+- refine BPM estimation on ballads
 - strengthen Last.fm/local library matching
-- evaluate release build/AAB for Play Console
 - expand user documentation and store screenshots
-
----
 
 ## 👤 Author
 
 **Luca Trombetta**
-
----
 
 ## 📄 License
 

@@ -1,19 +1,22 @@
 # Privacy Policy — Music-Mood
 
-Effective date: July 10, 2026
+Effective date: 22/10/2026
 
 Music-Mood is an Android app designed to analyze the user's local music library, classify songs by mood, generate personal statistics, create a personal music profile and produce weekly reports.
+
 This policy describes which data may be processed by the app, for which purposes, where it is stored and which controls are available to the user.
 
 ## 1. Developer
 
 Music-Mood is developed as a personal project by Luca Trombetta.
+
 Privacy contact:
 lucatrombetta090@mail.com
 
 ## 2. Data processed by the app
 
 Music-Mood may process data related to the local music library available on the device, including:
+
 - song title
 - artist
 - album
@@ -26,16 +29,20 @@ Music-Mood may process data related to the local music library available on the 
 
 This data is used to display the library, organize songs, play music, analyze audio content, generate statistics and create music reports.
 
-## 3. Local library refresh
+## 3. Local library refresh and re-analysis
 
-Music-Mood may let the user manually refresh the local music library from Settings.
-Library refresh performs a new scan of the songs available on the device, for example after new audio files are added.
-This feature is not intended to delete mood analysis, manual moods, Last.fm cache or calibration data already present in the app.
+Music-Mood may let the user manually refresh the local music library from Settings, for example after new audio files are added.
+
+When the analysis engine is updated, the app may offer to re-analyze the library. Re-analysis only starts with the user's consent ("Update now" or "Re-analyze library" in Settings) and runs entirely on the device.
+
+Neither refresh nor re-analysis deletes the moods manually chosen by the user or the Last.fm data already collected.
 
 ## 4. Mood analysis
 
 Music-Mood may analyze local songs to assign a musical mood.
+
 The app may store locally:
+
 - estimated mood
 - classification confidence
 - valence
@@ -44,32 +51,43 @@ The app may store locally:
 - musical key
 - major or minor mode, if available
 - optional mood manually changed by the user
+- scores of all moods, secondary mood and analysis engine used
+- mood inferred from Last.fm tags and Last.fm lookup status, if the option is enabled
 
-This data is used only for internal app features, such as library, player, BubbleMap, statistics, music profile, automatic playlists and Weekly Mood Report.
+This data is used only for internal app features, such as library, player, the "Why this mood?" explanation, BubbleMap, statistics, music profile, automatic playlists and Weekly Mood Report.
 
 ## 5. Valence, arousal and BubbleMap
 
 Music-Mood may calculate and display emotional metrics such as valence and arousal.
+
 Valence represents whether a song tends to be perceived as more positive or negative.
+
 Arousal represents the intensity or activation level associated with the song.
+
 These values may be used to position songs in the BubbleMap, generate aggregate statistics, create the emotional fingerprint of the profile and improve the coherence of automatic playlists.
 
 ## 6. YAMNet and local DSP classification
 
 Music-Mood may use a local analysis engine based on DSP and, when enabled, an advanced YAMNet/TensorFlow Lite classifier.
+
 These processing steps are used to estimate moods and music characteristics of songs.
-Main analysis is performed locally on the device.
+
+Audio analysis runs entirely on the device: audio files are never sent outside the device.
 
 ## 7. Manual mood
 
 The user may manually change the mood associated with a song.
-Manual mood may have priority over automatically calculated mood and may be used to improve playlists, statistics, profile and reports.
+
+The mood chosen by the user has priority over the automatically calculated mood and is used by statistics, profile, BubbleMap, playlists and reports.
+
 The user may also remove the manual mood and return to the app-calculated result.
 
 ## 8. Listening events and Weekly Report
 
 Music-Mood may locally record listening events to generate the Weekly Mood Report.
+
 The report may include:
+
 - number of songs listened
 - dominant mood
 - mood percentage distribution
@@ -81,7 +99,9 @@ Reports are stored locally on the device.
 ## 9. Personal music profile
 
 Music-Mood may generate a personal music profile based on analyzed songs.
+
 The profile may include:
+
 - dominant musical archetype
 - emotional fingerprint
 - top mood distribution
@@ -94,26 +114,34 @@ This data is generated locally and used only for app features.
 ## 10. Classifier calibration
 
 Music-Mood may use locally available analysis data to calibrate the mood classifier on the user's library.
+
 Calibration may use:
+
 - average library valence
 - average library arousal
 - average BPM, if available
 - number of analyzed songs
 
 Calibration is performed locally on the device.
-The user can apply or reset calibration from app settings.
-Resetting calibration restores the original model behavior and may update the profile fingerprint, radar, top moods and archetype.
+
+The user can apply or reset calibration from Settings. Resetting restores the original analysis moods and updates statistics, profile fingerprint, radar, top moods and archetype.
+
+Calibration settings are excluded from Android backup and are not restored after a reinstall.
 
 ## 11. Automatic playlists
 
 Music-Mood may generate automatic playlists based on mood, valence, arousal and BPM.
+
 Playlists are created locally using music data already present in the app.
+
 Playlists are not sent to a proprietary backend.
 
 ## 12. Optional Last.fm integration
 
 Music-Mood may include optional Last.fm integration.
+
 If the user configures Last.fm, the app may locally store:
+
 - Last.fm username
 - Last.fm API key entered by the user
 - local summary of the last imported Last.fm data
@@ -121,7 +149,9 @@ If the user configures Last.fm, the app may locally store:
 - local Last.fm summary cache
 
 When the user presses the Refresh Last.fm button, Music-Mood may call the Last.fm API to retrieve recent tracks or tracks related to the report period.
+
 Data obtained from Last.fm may include:
+
 - track title
 - artist
 - album
@@ -131,49 +161,67 @@ Data obtained from Last.fm may include:
 - currently playing indicator, if available
 
 Last.fm integration is optional.
-Last.fm refresh is started manually by the user.
+
 If no Last.fm tracks are available for the Weekly Report period, the app may show recent tracks as informational fallback. This fallback does not modify the local weekly report.
 
-Data processing by Last.fm is governed by Last.fm policies and terms of service, available at https://www.last.fm/legal/privacy.
+Data processing by Last.fm is governed by Last.fm policies and terms of service, available at [https://www.last.fm/legal/privacy](https://www.last.fm/legal/privacy).
+
+## 12-bis. Last.fm tags as a second opinion on mood
+
+If the user has configured Last.fm and the "Use Last.fm tags" option is enabled (enabled by default), Music-Mood may call the Last.fm API in the background (track.getTopTags method) for each song in the library, sending the song title, artist name and the user's Last.fm API key.
+
+The app receives the community tags associated with the song (for example "melancholic", "party") and stores locally only:
+
+- the mood inferred from these tags
+- the lookup status (not yet read, read, no useful tags, error to retry), used to resume from the remaining songs
+
+Tags are not stored.
+
+The user can stop and resume the lookup at any time, from Settings or from the progress notification. Turning the option off stops the lookup and deletes the moods inferred from Last.fm.
 
 ## 13. Album artwork from external services
 
 To improve the visual experience in the library, player and mini-player, Music-Mood may retrieve song artwork from public external services when artwork is not available locally in the song metadata.
 
 The external services contacted by the app are:
-- **Apple iTunes Search API** (public endpoint https://itunes.apple.com/search), used as the primary source
-- **Deezer Search API** (public endpoint https://api.deezer.com/search/track), used as fallback source
+
+- **Apple iTunes Search API** (public endpoint [https://itunes.apple.com/search](https://itunes.apple.com/search)), used as the primary source
+- **Deezer Search API** (public endpoint [https://api.deezer.com/search/track](https://api.deezer.com/search/track)), used as fallback source
 
 When Music-Mood queries these services, only the minimum information required for the artwork search is sent:
+
 - song title
 - artist name
 
 No other personal data, device identifier, advertising identifier, voluntarily provided IP address, estimated mood, valence, arousal or listening data is transmitted to these services.
 
-Requests are made over HTTPS.
-The result used by the app is the artwork image URL.
-The resolved artwork URL is stored locally in the app cache to avoid repeated requests for the same song.
+Requests are made over HTTPS. The result used by the app is the artwork image URL, stored locally in the app cache to avoid repeated requests for the same song.
 
 The user can implicitly disable this feature by working in offline mode: if the device has no connection, the app simply shows the local placeholder instead of the remote artwork.
 
 Data processing by Apple and Deezer is governed by their respective policies:
-- Apple: https://www.apple.com/legal/privacy/
-- Deezer: https://www.deezer.com/legal/personal-datas
+
+- Apple: [https://www.apple.com/legal/privacy/](https://www.apple.com/legal/privacy/)
+- Deezer: [https://www.deezer.com/legal/personal-datas](https://www.deezer.com/legal/personal-datas)
 
 Music-Mood has no commercial or contractual relationship with Apple and Deezer and uses their public search endpoints exclusively for the purpose of displaying album artwork.
 
 ## 14. App language
 
 Music-Mood may locally store the language selected by the user.
-Supported languages are Italian and English.
+
+Supported languages are Italian, English and Spanish.
+
 The selected language is stored in local app preferences and used to display the interface, texts, informational content and in-app documentation in the selected language.
 
 ## 15. Purposes of processing
 
 Data is processed to:
+
 - display and organize the local music library
 - play music
 - classify songs by mood
+- explain how a song's mood was calculated
 - allow manual mood corrections
 - calculate valence, arousal, BPM and key
 - generate the BubbleMap
@@ -183,6 +231,7 @@ Data is processed to:
 - generate Weekly Mood Reports
 - create mood-coherent automatic playlists
 - optionally integrate Last.fm data
+- use Last.fm tags as a second opinion on mood classification
 - retrieve album artwork from public external services
 - improve user experience
 - allow manual sharing of profile or report
@@ -190,12 +239,15 @@ Data is processed to:
 ## 16. Data retention
 
 App data is mainly stored on the user device.
+
 The app may locally store:
+
 - song mood analysis
 - user preferences
 - selected app language
 - Last.fm configuration
 - Last.fm summary cache
+- mood inferred from Last.fm tags and lookup status
 - cache of album artwork URLs retrieved from iTunes or Deezer
 - weekly reports
 - listening events
@@ -208,10 +260,12 @@ Data remains on the device until the user deletes app data, uninstalls the app o
 ## 17. Data sharing
 
 Music-Mood does not sell user personal data.
-In the current configuration, Music-Mood does not use a proprietary backend to process moods, reports, profile or personal statistics.
+
+Music-Mood does not use a proprietary backend to process moods, reports, profile or personal statistics.
 
 Some app features may involve requests to external services:
-- **Last.fm**, only if the user configures the optional integration and manually presses the Refresh Last.fm button
+
+- **Last.fm**, only if the user configures the optional integration: when the user presses Refresh Last.fm and, if the "Use Last.fm tags" option is enabled, in the background to read song tags (title and artist)
 - **Apple iTunes Search API**, to retrieve album artwork, sending song title and artist
 - **Deezer Search API**, as fallback to retrieve album artwork when iTunes returns no results, sending song title and artist
 
@@ -220,32 +274,41 @@ Data processing by these services is governed by their policies and terms.
 ## 18. Last.fm API key
 
 The Last.fm API key entered by the user is stored locally on the device in encrypted form and used to call the Last.fm API.
+
 The user is responsible for using the API key according to applicable Last.fm terms.
+
 Music-Mood does not require the Last.fm password.
 
 ## 19. Security
 
 Music-Mood follows a data minimization approach.
+
 Main features are executed locally on the device.
+
 Communications with external services, when present, use HTTPS.
-Sensitive credentials stored locally, such as the Last.fm API key, are encrypted through Android security APIs.
+
+Sensitive credentials stored locally, such as the Last.fm API key, are encrypted through Android security APIs and excluded from Android backup.
 
 ## 20. Android permissions
 
-Music-Mood may request permissions required to access audio files or the media library on the device, depending on Android version and enabled features.
+Music-Mood may request permissions required to access audio files or the media library on the device and to show notifications, depending on Android version and enabled features.
+
 Permissions are used to:
+
 - read songs available on the device
 - display the music library
 - play music
 - analyze songs
+- show analysis progress and the Weekly Mood Report in notifications
 - generate statistics and reports
 
 The user can revoke permissions from Android device settings.
 
-## 21. Manual sharing of profile or report
+## 21. Manual sharing of profile, report or export
 
-The user may choose to manually share an image or summary of the music profile or Weekly Mood Report using the device sharing features.
-Sharing only happens after an explicit user action.
+The user may choose to manually share an image or summary of the music profile or Weekly Mood Report, or to export analysis data to a CSV file, using the device features.
+
+Sharing and export only happen after an explicit user action.
 
 ## 22. Children
 
@@ -254,28 +317,35 @@ Music-Mood is not specifically designed for children and does not knowingly inte
 ## 23. User control
 
 The user can control data through device settings and available app features.
+
 The user can:
+
 - revoke Android permissions granted to the app
 - clear app data from Android settings
 - uninstall the app
 - avoid configuring Last.fm
 - remove or modify Last.fm credentials
-- remove Last.fm cache, if available
-- clear local mood analysis, if available
+- remove Last.fm cache
+- stop and resume the Last.fm tag lookup
+- turn off the "Use Last.fm tags" option, deleting the moods already inferred
+- re-analyze the library
 - reset classifier calibration
 - avoid using profile or report sharing
 - work in offline mode to avoid retrieving album artwork from external services
 
 ## 24. Online Privacy Policy
 
-The official Music-Mood Privacy Policy is available online:
-[Privacy Policy online](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+The official Music-Mood Privacy Policy is available online: [Privacy Policy online](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+
 A copy of the Privacy Policy may also be viewed in the app Info screen.
 
 ## 25. Changes to this policy
 
 This Privacy Policy may be updated to reflect changes to the app, features or legal requirements.
+
 In case of relevant changes, the effective date will be updated.
+
+**Version 1.0.1:** song lyrics analysis has been removed. The app no longer contacts the LRCLIB service and, with the update, lyrics scores calculated by previous versions are deleted from the device.
 
 ## 26. Contact
 

@@ -1,0 +1,353 @@
+# Privacy Policy — Music-Mood
+
+Data di efficacia: 22/10/2026
+
+Music-Mood è un'app Android progettata per analizzare la libreria musicale locale dell'utente, classificare i brani per mood, generare statistiche personali, creare un profilo musicale e produrre report settimanali.
+
+Questa informativa descrive quali dati possono essere trattati dall'app, per quali finalità, dove vengono conservati e quali controlli sono disponibili all'utente.
+
+## 1. Sviluppatore
+
+Music-Mood è sviluppata come progetto personale da Luca Trombetta.
+
+Contatto privacy:
+lucatrombetta090@mail.com
+
+## 2. Dati trattati dall'app
+
+Music-Mood può trattare dati relativi alla libreria musicale locale presente sul dispositivo, tra cui:
+
+- titolo del brano
+- artista
+- album
+- durata
+- genere, se disponibile
+- anno, se disponibile
+- percorso o cartella del file audio
+- copertina locale, se disponibile
+- identificativo locale del brano
+
+Questi dati sono usati per mostrare la libreria, organizzare i brani, riprodurre musica, analizzare i contenuti audio, generare statistiche e creare report musicali.
+
+## 3. Ricarica e rianalisi della libreria locale
+
+Music-Mood può permettere all'utente di ricaricare manualmente la libreria musicale locale dalle Impostazioni, ad esempio dopo l'aggiunta di nuovi file audio.
+
+Quando il motore di analisi viene aggiornato, l'app può proporre di rianalizzare la libreria. La rianalisi parte solo con il consenso dell'utente ("Aggiorna ora" oppure "Rianalizza la libreria" in Impostazioni) e avviene interamente sul dispositivo.
+
+Né la ricarica né la rianalisi cancellano i mood scelti manualmente dall'utente o i dati Last.fm già raccolti.
+
+## 4. Analisi mood
+
+Music-Mood può analizzare i brani locali per attribuire un mood musicale.
+
+L'app può salvare localmente:
+
+- mood stimato
+- confidenza della classificazione
+- valenza
+- arousal
+- BPM stimato
+- tonalità musicale
+- modalità maggiore o minore, se disponibile
+- eventuale mood modificato manualmente dall'utente
+- punteggi di tutti i mood, mood secondario e motore di analisi usato
+- mood dedotto dai tag Last.fm e stato della lettura Last.fm, se l'opzione è attiva
+
+Questi dati sono usati solo per le funzionalità interne dell'app, come libreria, player, spiegazione "Perché questo mood?", BubbleMap, statistiche, profilo musicale, playlist automatiche e Weekly Mood Report.
+
+## 5. Valenza, arousal e BubbleMap
+
+Music-Mood può calcolare e visualizzare metriche emozionali come valenza e arousal.
+
+La valenza rappresenta la tendenza di un brano a essere percepito come più positivo o negativo.
+
+L'arousal rappresenta il livello di intensità o attivazione associato al brano.
+
+Queste informazioni possono essere usate per posizionare i brani nella BubbleMap, generare statistiche aggregate, creare il fingerprint emotivo del profilo e migliorare la coerenza delle playlist automatiche.
+
+## 6. Classificazione YAMNet e DSP locale
+
+Music-Mood può usare un motore di analisi locale basato su DSP e, se abilitato, un classificatore avanzato YAMNet/TensorFlow Lite.
+
+Queste elaborazioni sono usate per stimare mood e caratteristiche musicali dei brani.
+
+L'analisi audio è eseguita interamente sul dispositivo: i file audio non vengono mai inviati all'esterno.
+
+## 7. Mood manuale
+
+L'utente può modificare manualmente il mood associato a un brano.
+
+Il mood scelto dall'utente ha priorità sul mood calcolato automaticamente ed è usato da statistiche, profilo, BubbleMap, playlist e report.
+
+L'utente può anche rimuovere il mood manuale, tornando al risultato calcolato dall'app.
+
+## 8. Eventi di ascolto e Weekly Mood Report
+
+Music-Mood può registrare localmente eventi di ascolto per generare il Weekly Mood Report.
+
+Il report può includere:
+
+- numero di brani ascoltati
+- mood dominante
+- distribuzione percentuale dei mood
+- confronto con report precedenti
+- dati aggregati della settimana
+
+I report sono conservati localmente sul dispositivo.
+
+## 9. Profilo musicale personale
+
+Music-Mood può generare un profilo musicale personale basato sui brani analizzati.
+
+Il profilo può includere:
+
+- archetipo musicale dominante
+- fingerprint emotivo
+- distribuzione dei mood principali
+- artista principale, se disponibile
+- conteggio dei brani analizzati
+- suggerimenti musicali giornalieri
+
+Questi dati sono generati localmente e usati solo per le funzionalità dell'app.
+
+## 10. Calibrazione del classificatore
+
+Music-Mood può usare i dati di analisi disponibili localmente per calibrare il classificatore in base alla libreria dell'utente.
+
+La calibrazione può usare:
+
+- media della valenza della libreria
+- media dell'arousal della libreria
+- BPM medio, se disponibile
+- numero di brani analizzati
+
+La calibrazione viene eseguita localmente sul dispositivo.
+
+L'utente può applicare o resettare la calibrazione dalle Impostazioni. Il reset ripristina i mood originali dell'analisi e aggiorna statistiche, fingerprint, radar, mood principali e archetipo del profilo.
+
+Le impostazioni di calibrazione sono escluse dal backup Android e non vengono ripristinate dopo una reinstallazione.
+
+## 11. Playlist automatiche
+
+Music-Mood può generare playlist automatiche basate su mood, valenza, arousal e BPM.
+
+Le playlist sono create localmente usando i dati musicali già presenti nell'app.
+
+Le playlist non vengono inviate a un backend proprietario.
+
+## 12. Integrazione opzionale con Last.fm
+
+Music-Mood può includere una integrazione opzionale con Last.fm.
+
+Se l'utente configura Last.fm, l'app può salvare localmente:
+
+- username Last.fm
+- API key Last.fm inserita dall'utente
+- riepilogo locale degli ultimi dati Last.fm importati
+- statistiche aggregate Last.fm mostrate nel Weekly Report
+- cache locale del riepilogo Last.fm
+
+Quando l'utente preme il pulsante Aggiorna Last.fm, Music-Mood può chiamare l'API Last.fm per recuperare ascolti recenti o ascolti relativi al periodo del report.
+
+I dati ottenuti da Last.fm possono includere:
+
+- titolo del brano
+- artista
+- album
+- orario di ascolto, se disponibile
+- URL Last.fm del brano, se disponibile
+- URL immagine o copertina, se disponibile
+- indicazione di ascolto in corso, se disponibile
+
+L'integrazione Last.fm è opzionale.
+
+Se non sono disponibili ascolti Last.fm nel periodo del Weekly Report, l'app può mostrare gli ascolti recenti come fallback informativo. Questo fallback non modifica il report settimanale locale.
+
+Il trattamento dei dati da parte di Last.fm è regolato dalle policy e dai termini di servizio di Last.fm, disponibili all'indirizzo [https://www.last.fm/legal/privacy](https://www.last.fm/legal/privacy).
+
+## 12-bis. Tag Last.fm come secondo parere sul mood
+
+Se l'utente ha configurato Last.fm e l'opzione "Usa i tag di Last.fm" è attiva (attiva di default), Music-Mood può chiamare in background l'API Last.fm (metodo track.getTopTags) per ciascun brano della libreria, inviando titolo del brano, nome dell'artista e l'API key Last.fm dell'utente.
+
+L'app riceve i tag della community associati al brano (ad esempio "melancholic", "party") e salva localmente soltanto:
+
+- il mood dedotto da questi tag
+- lo stato della lettura (non ancora letto, letto, nessun tag utile, errore da riprovare), usato per riprendere dai brani mancanti
+
+I tag non vengono conservati.
+
+L'utente può interrompere e riprendere la lettura in qualsiasi momento, da Impostazioni o dalla notifica di avanzamento. Disattivando l'opzione, la lettura si ferma e i mood dedotti da Last.fm vengono cancellati.
+
+## 13. Copertine album da servizi esterni
+
+Per migliorare l'esperienza visiva nella libreria, nel player e nel mini-player, Music-Mood può recuperare le copertine dei brani da servizi esterni pubblici quando la copertina non è disponibile localmente nei metadati del brano.
+
+I servizi esterni contattati dall'app sono:
+
+- **Apple iTunes Search API** (endpoint pubblico [https://itunes.apple.com/search](https://itunes.apple.com/search)), usato come fonte primaria
+- **Deezer Search API** (endpoint pubblico [https://api.deezer.com/search/track](https://api.deezer.com/search/track)), usato come fonte di fallback
+
+Quando Music-Mood interroga questi servizi, invia soltanto le informazioni minime necessarie alla ricerca della copertina:
+
+- titolo del brano
+- nome dell'artista
+
+Nessun altro dato personale, identificativo del dispositivo, identificativo pubblicitario, indirizzo IP fornito volontariamente, mood stimato, valenza, arousal o dato di ascolto viene trasmesso a questi servizi.
+
+Le richieste vengono effettuate tramite HTTPS. Il risultato utilizzato dall'app è l'URL dell'immagine di copertina, conservato localmente nella cache dell'app per evitare richieste ripetute per lo stesso brano.
+
+L'utente può disabilitare implicitamente questa funzione lavorando in modalità offline: se il dispositivo non ha connessione, l'app mostra semplicemente il segnaposto locale al posto della copertina remota.
+
+Il trattamento dei dati da parte di Apple e Deezer è regolato dalle rispettive policy:
+
+- Apple: [https://www.apple.com/legal/privacy/](https://www.apple.com/legal/privacy/)
+- Deezer: [https://www.deezer.com/legal/personal-datas](https://www.deezer.com/legal/personal-datas)
+
+Music-Mood non ha alcun rapporto commerciale o contrattuale con Apple e Deezer e utilizza i loro endpoint pubblici di ricerca per finalità esclusivamente di visualizzazione delle copertine.
+
+## 14. Lingua dell'app
+
+Music-Mood può salvare localmente la lingua scelta dall'utente.
+
+Le lingue supportate sono italiano, inglese e spagnolo.
+
+La scelta lingua viene salvata nelle preferenze locali dell'app e viene usata per mostrare interfaccia, testi, contenuti informativi e documentazione in-app nella lingua selezionata.
+
+## 15. Finalità del trattamento
+
+I dati sono trattati per:
+
+- mostrare e organizzare la libreria musicale locale
+- riprodurre musica
+- classificare i brani per mood
+- spiegare come è stato calcolato il mood di un brano
+- permettere correzioni manuali dei mood
+- calcolare valenza, arousal, BPM e tonalità
+- generare la BubbleMap
+- calibrare il classificatore
+- generare statistiche musicali
+- generare il profilo musicale personale
+- generare Weekly Mood Report
+- creare playlist automatiche coerenti con i mood
+- integrare opzionalmente dati Last.fm
+- usare i tag Last.fm come secondo parere sulla classificazione dei mood
+- recuperare copertine album da servizi esterni pubblici
+- migliorare l'esperienza utente
+- consentire la condivisione manuale di profilo o report
+
+## 16. Conservazione dei dati
+
+I dati dell'app sono conservati principalmente sul dispositivo dell'utente.
+
+Possono essere conservati localmente:
+
+- analisi mood dei brani
+- preferenze utente
+- lingua scelta dall'utente
+- configurazione Last.fm
+- cache del riepilogo Last.fm
+- mood dedotto dai tag Last.fm e stato della lettura
+- cache degli URL delle copertine album recuperate da iTunes o Deezer
+- report settimanali
+- eventi di ascolto
+- mood modificati manualmente dall'utente
+- dati di calibrazione
+- dati aggregati del profilo musicale
+
+I dati rimangono sul dispositivo fino a quando l'utente elimina i dati dell'app, disinstalla l'app o usa eventuali funzioni di cancellazione disponibili.
+
+## 17. Condivisione dei dati
+
+Music-Mood non vende i dati personali dell'utente.
+
+Music-Mood non usa un backend proprietario per elaborare mood, report, profilo o statistiche personali.
+
+Alcune funzionalità dell'app possono comportare richieste verso servizi esterni:
+
+- **Last.fm**, solo se l'utente configura l'integrazione opzionale: quando preme Aggiorna Last.fm e, se l'opzione "Usa i tag di Last.fm" è attiva, in background per leggere i tag dei brani (titolo e artista)
+- **Apple iTunes Search API**, per recuperare copertine album, inviando titolo e artista del brano
+- **Deezer Search API**, come fallback per recuperare copertine album quando iTunes non restituisce risultati, inviando titolo e artista del brano
+
+Il trattamento dei dati da parte di questi servizi è regolato dalle loro policy e dai loro termini.
+
+## 18. API key Last.fm
+
+L'API key Last.fm inserita dall'utente viene salvata localmente sul dispositivo in forma cifrata e usata per effettuare chiamate verso l'API Last.fm.
+
+L'utente è responsabile dell'uso della propria API key secondo i termini applicabili di Last.fm.
+
+Music-Mood non richiede la password Last.fm.
+
+## 19. Sicurezza
+
+Music-Mood adotta un approccio di minimizzazione dei dati.
+
+Le funzionalità principali sono eseguite localmente sul dispositivo.
+
+Le comunicazioni verso servizi esterni, quando presenti, avvengono tramite HTTPS.
+
+Le credenziali sensibili conservate localmente, come l'API key Last.fm, sono cifrate tramite le API di sicurezza di Android ed escluse dal backup Android.
+
+## 20. Permessi Android
+
+Music-Mood può richiedere permessi necessari per accedere ai file audio o alla libreria multimediale del dispositivo e per mostrare notifiche, in base alla versione Android e alle funzionalità utilizzate.
+
+I permessi sono usati per:
+
+- leggere i brani presenti sul dispositivo
+- mostrare la libreria musicale
+- riprodurre musica
+- analizzare i brani
+- mostrare l'avanzamento delle analisi e il Weekly Mood Report nelle notifiche
+- generare statistiche e report
+
+L'utente può revocare i permessi dalle impostazioni Android del dispositivo.
+
+## 21. Condivisione manuale di profilo, report o export
+
+L'utente può scegliere di condividere manualmente un'immagine o un riepilogo del profilo musicale o del Weekly Mood Report, oppure di esportare le analisi in un file CSV, usando le funzionalità del dispositivo.
+
+La condivisione e l'export avvengono solo dopo una azione esplicita dell'utente.
+
+## 22. Minori
+
+Music-Mood non è progettata specificamente per bambini e non intende raccogliere consapevolmente dati personali di minori.
+
+## 23. Controllo dell'utente
+
+L'utente può controllare i propri dati attraverso le impostazioni del dispositivo e le funzionalità disponibili nell'app.
+
+L'utente può:
+
+- revocare i permessi Android concessi all'app
+- cancellare i dati dell'app dalle impostazioni Android
+- disinstallare l'app
+- evitare di configurare Last.fm
+- rimuovere o modificare le credenziali Last.fm
+- rimuovere la cache Last.fm
+- interrompere e riprendere la lettura dei tag Last.fm
+- disattivare l'opzione "Usa i tag di Last.fm", cancellando i mood già dedotti
+- rianalizzare la libreria
+- resettare la calibrazione del classificatore
+- evitare di usare la condivisione di profilo o report
+- lavorare in modalità offline per evitare il recupero delle copertine album da servizi esterni
+
+## 24. Privacy Policy online
+
+La Privacy Policy ufficiale di Music-Mood è disponibile online: [Privacy Policy online](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+
+Una copia della Privacy Policy può essere visualizzata anche nella schermata Info app.
+
+## 25. Modifiche a questa informativa
+
+Questa Privacy Policy può essere aggiornata per riflettere cambiamenti dell'app, delle funzionalità o dei requisiti normativi.
+
+In caso di modifiche rilevanti, la data di efficacia sarà aggiornata.
+
+**Versione 1.0.1:** rimossa l'analisi dei testi dei brani. L'app non contatta più il servizio LRCLIB e, con l'aggiornamento, i punteggi dei testi calcolati dalle versioni precedenti vengono cancellati dal dispositivo.
+
+## 26. Contatti
+
+Per domande relative a questa Privacy Policy o al trattamento dei dati:
+lucatrombetta090@mail.com
