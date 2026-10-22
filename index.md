@@ -6,4 +6,4 @@ Documentazione pubblica per l'app Android Music-Mood.
 
 La Privacy Policy ufficiale di Music-Mood è disponibile qui:
 
-privacy_policy.md
+PRIVACY_POLICY.md
