@@ -1,7 +1,7 @@
 # Music-Mood — Google Play Data Safety Draft
 
 Last updated: July 10, 2026
-Official Privacy Policy: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/privacy_policy)
+Official Privacy Policy: [Music-Mood Privacy Policy](https://lucatrombetta090-sys.github.io/Music-Mood/PRIVACY_POLICY_EN)
 This document is an operational draft for completing the **Data Safety** section in Google Play Console.
 This is not legal advice. Final declarations must be verified against the actually published build, included libraries, active SDKs and enabled features.
 
